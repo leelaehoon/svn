@@ -1,3 +1,4 @@
+<%@page import="java.util.Objects"%>
 <%@page import="kr.or.ddit.vo.PagingInfoVO"%>
 <%@page import="kr.or.ddit.vo.MemberVO"%>
 <%@page import="java.util.List"%>
@@ -27,19 +28,15 @@
 	integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
 	crossorigin="anonymous"></script>
 <script type="text/javascript">
-	$(function () {
-		
-	})
-</script>
-<style type="text/css">
-	table {
-		height: 380px;
+	function <%=pagingVO.getFuncName()%>(page) {
+		document.searchForm.page.value = page;
+		document.searchForm.submit();
 	}
-</style>
+</script>
 </head>
 <body>
 	<h4>회원 목록</h4>
-	<input type="button" class="button btn btn-info" value="신규등록"
+	<input type="button" class="button btn btn-primary" value="신규등록"
 		onclick="location.href='<%=request.getContextPath()%>/member/memberInsert.do'" />
 	<table class="table table-hover">
 		<thead class="thead-dark">
@@ -82,6 +79,27 @@
 					<nav aria-label="Page navigation example">
 						<%=pagingVO.getPagingHTML() %>
 					</nav>
+					<form name="searchForm">
+						<div class="form-group row">
+							<input type="hidden" name="page" />
+							<div class="col-xs-2">
+								<select name="searchType" class="form-control">
+									<option value="all">전체</option>
+									<option value="name">이름</option>
+									<option value="address">지역</option>
+								</select>
+								<script type="text/javascript">
+									document.searchForm.searchType.value = "<%=Objects.toString(pagingVO.getSearchType(), "all")%>"
+								</script>	
+							</div>
+							<div class="col-xs-2">
+								<input type="text" name="searchWord" class="form-control" value="<%=Objects.toString(pagingVO.getSearchWord(), "")%>"/>
+							</div>
+							<div class="col-xs-2">
+								<input type="submit" value="검색" class="button btn btn-info" />
+							</div>
+						</div>
+					</form>
 				</td>
 			</tr>
 		</tfoot>

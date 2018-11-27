@@ -1,3 +1,5 @@
+<%@page import="kr.or.ddit.vo.ProdVO"%>
+<%@page import="java.util.List"%>
 <%@page import="kr.or.ddit.CommonException"%>
 <%@page import="kr.or.ddit.member.service.MemberServiceImpl"%>
 <%@page import="kr.or.ddit.member.service.IMemberService"%>
@@ -186,5 +188,44 @@
 <%
 	}
 %>
+<div class="container">
+<h4>구매 상품 목록</h4>
+</div>
+<div class="container">
+	<table class="table table-hover">
+		<thead class="thead-dark">
+			<tr>
+				<th>상품코드</th>
+				<th>상품명</th>
+				<th>구매가</th>
+				<th>판매가</th>
+				<th>상품개요</th>
+			</tr>
+		</thead>
+		<tbody>
+			<%
+				List<ProdVO> prodList = member.getProdList();
+				if (prodList != null && prodList.size() > 0) {
+					for (ProdVO tmp : prodList) {
+						%>
+						<tr>
+							<td><%=tmp.getProd_id() %></td>
+							<td><%=tmp.getProd_name() %></td>
+							<td><%=tmp.getProd_cost() %></td>
+							<td><%=tmp.getProd_price() %></td>
+							<td><%=tmp.getProd_outline() %></td>
+						</tr>
+						<%
+					}
+					
+				} else {
+					%>
+					<tr><td colspan="5">구매목록이 없습니다.</td></tr>
+					<%
+				}
+			%>
+		</tbody>
+	</table>
+</div>
 </body>
 </html>

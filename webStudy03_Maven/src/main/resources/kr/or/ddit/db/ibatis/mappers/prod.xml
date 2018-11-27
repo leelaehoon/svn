@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="Prod">
+	<sql id="searchFrag">
+		<dynamic prepend=" WHERE ">
+			<isNotNull property="searchVO">
+				<isNotEmpty property="searchVO.prod_lgu" prepend=" AND ">
+					PROD_LGU = #searchVO.prod_lgu#
+				</isNotEmpty>
+				<isNotEmpty property="searchVO.prod_buyer" prepend=" AND ">
+					PROD_BUYER = #searchVO.prod_buyer#
+				</isNotEmpty>
+				<isNotEmpty property="searchVO.prod_name" prepend=" AND ">
+					PROD_NAME LIKE '%'||#searchVO.prod_name#||'%'
+				</isNotEmpty>
+			</isNotNull>
+		</dynamic>
+	</sql>
+	
+	<select id="selectTotalRecord" resultClass="Long" parameterClass="pagingVO">
+		SELECT COUNT(*)
+		FROM PROD
+		<include refid="Prod.searchFrag"/>
+	</select>
+	
+	<select id="selectProdList" resultClass="prodVO" parameterClass="pagingVO">
+		SELECT A.*
+		FROM (
+			SELECT ROWNUM RNUM, PROD_ID, PROD_NAME, PROD_PRICE, PROD_OUTLINE, PROD_MILEAGE,
+				   LPROD_NM, BUYER_NAME
+			FROM PROD INNER JOIN LPROD ON (PROD_LGU = LPROD_GU)
+			          INNER JOIN BUYER ON (PROD_BUYER = BUYER_ID) 
+			<include refid="Prod.searchFrag"/>
+		) A
+		<![CDATA[
+   		WHERE RNUM >= #startRow# AND RNUM <= #endRow#
+   		]]> 
+ 		
+<!-- 		SELECT B.*  -->
+<!-- 		FROM ( -->
+<!-- 			SELECT ROWNUM RNUM, A.* -->
+<!-- 			FROM ( -->
+<!-- 				SELECT      P.PROD_ID,    P.PROD_NAME,    P.PROD_LGU,    P.PROD_BUYER, -->
+<!--     						P.PROD_COST,    P.PROD_PRICE,    P.PROD_SALE,    P.PROD_OUTLINE, -->
+<!--     						P.PROD_DETAIL,    P.PROD_IMG,    P.PROD_TOTALSTOCK,    TO_CHAR(P.PROD_INSDATE, 'YYYY-MM-DD'), -->
+<!--     						P.PROD_PROPERSTOCK,    P.PROD_SIZE,    PROD_COLOR,    P.PROD_DELIVERY, -->
+<!--     						P.PROD_UNIT,    P.PROD_QTYIN,    P.PROD_QTYSALE,    P.PROD_MILEAGE, -->
+<!--     						L.LPROD_NM,    B.BUYER_NAME -->
+<!-- 				FROM PROD P, LPROD L, BUYER B -->
+<!-- 				WHERE P.PROD_LGU = L.LPROD_GU -->
+<!-- 				AND P.PROD_BUYER = B.BUYER_ID -->
+<!-- 				ORDER BY P.ROWID DESC ) A ) B -->
+<!-- 		<![CDATA[ -->
+<!--  		WHERE RNUM >= #startRow# AND RNUM <= #endRow#  -->
+<!--  		]]>   -->
+	</select>
+	
+	<resultMap class="buyerVO" id="buyerMap">
+		<result property="buyer_name" column="BUYER_NAME"/>
+		<result property="buyer_add1" column="BUYER_ADD1"/>
+		<result property="buyer_charger" column="BUYER_CHARGER"/>
+		<result property="buyer_comtel" column="BUYER_COMTEL"/>
+	</resultMap>
+	
+	<resultMap class="prodVO" id="prodMap" groupBy="prod_id">
+		<result property="prod_id" column="PROD_ID" />
+		<result property="prod_name" column="PROD_NAME" />
+		<result property="prod_lgu" column="PROD_LGU" />
+		<result property="prod_buyer" column="PROD_BUYER" />
+		<result property="prod_cost" column="PROD_COST" />
+		<result property="prod_price" column="PROD_PRICE" />
+		<result property="prod_sale" column="PROD_SALE" />
+		<result property="prod_outline" column="PROD_OUTLINE" />
+		<result property="prod_detail" column="PROD_DETAIL" />
+		<result property="prod_img" column="PROD_IMG" />
+		<result property="prod_totalstock" column="PROD_TOTALSTOCK" />
+		<result property="prod_insdate" column="PROD_INSDATE" />
+		<result property="prod_properstock" column="PROD_PROPERSTOCK" />
+		<result property="prod_size" column="PROD_SIZE" />
+		<result property="prod_color" column="PROD_COLOR" />
+		<result property="prod_delivery" column="PROD_DELIVERY" />
+		<result property="prod_unit" column="PROD_UNIT" />
+		<result property="prod_qtyin" column="PROD_QTYIN" />
+		<result property="prod_qtysale" column="PROD_QTYSALE" />
+		<result property="prod_mileage" column="PROD_MILEAGE" />
+		<result property="lprod_nm" column="LPROD_NM" />
+		
+		<result property="buyer" resultMap="Prod.buyerMap"/>
+		<result property="customers" javaType="java.util.List" select="Prod.selectCustomers" column="PROD_ID" />
+	</resultMap>
+	
+	<select id="selectCustomers" resultClass="memberVO">
+		SELECT MEM_ID, MEM_NAME, MEM_ADD1, MEM_ADD2, MEM_HP, MEM_MAIL
+		FROM CART INNER JOIN MEMBER ON (CART_MEMBER = MEM_ID)
+		WHERE CART_PROD = #prod_id#
+	</select>
+		
+	<select id="selectProd" parameterClass="String" resultMap="Prod.prodMap">
+		SELECT
+		    PROD_ID,    PROD_NAME,    PROD_LGU,    PROD_BUYER,
+		    PROD_COST,    PROD_PRICE,    PROD_SALE,    PROD_OUTLINE,
+		    PROD_DETAIL,    PROD_IMG,    PROD_TOTALSTOCK,    TO_CHAR(PROD_INSDATE,'YYYY-MM-DD') PROD_INSDATE,
+		    PROD_PROPERSTOCK,    PROD_SIZE,    PROD_COLOR,    PROD_DELIVERY,
+		    PROD_UNIT,    PROD_QTYIN,    PROD_QTYSALE,    PROD_MILEAGE,
+		    LPROD_NM,   
+		    BUYER_NAME,    BUYER_ADD1,    BUYER_CHARGER,    BUYER_COMTEL
+		FROM PROD INNER JOIN LPROD ON (PROD_LGU = LPROD_GU)
+		          INNER JOIN BUYER ON (PROD_BUYER = BUYER_ID)
+		WHERE PROD_ID = #prod_id#
+	</select>
+	
+	<insert id="insertProd" parameterClass="prodVO">
+		<selectKey resultClass="String" keyProperty="prod_id">
+<!-- 			PK 생성 쿼리 -->
+			SELECT #prod_lgu#||LPAD(NVL(TO_NUMBER(SUBSTR(MAX(PROD_ID), 5)), 0) + 1, 6, '0')
+			FROM PROD
+			WHERE PROD_LGU = #prod_lgu#
+		</selectKey>
+		INSERT INTO PROD (
+		    PROD_ID,    PROD_NAME,    PROD_LGU,    PROD_BUYER,
+		    PROD_COST,    PROD_PRICE,    PROD_SALE,    PROD_OUTLINE,
+		    PROD_DETAIL,    PROD_IMG,    PROD_TOTALSTOCK,    PROD_INSDATE,
+		    PROD_PROPERSTOCK,    PROD_SIZE,    PROD_COLOR,    PROD_DELIVERY,
+		    PROD_UNIT,    PROD_QTYIN,    PROD_QTYSALE,    PROD_MILEAGE
+		) VALUES (
+		  	#prod_id#,    #prod_name#,    #prod_lgu#,    #prod_buyer#,
+		    #prod_cost#,    #prod_price#,    #prod_sale#,    #prod_outline#,
+		    #prod_detail#,    #prod_img#,    #prod_totalstock#,    TO_DATE(#prod_insdate#, 'YYYY-MM-DD'),
+		    #prod_properstock#,    #prod_size#,    #prod_color#,    #prod_delivery#,
+		    #prod_unit#,    #prod_qtyin#,    #prod_qtysale#,    #prod_mileage#
+		)
+	</insert>
+</sqlMap>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
