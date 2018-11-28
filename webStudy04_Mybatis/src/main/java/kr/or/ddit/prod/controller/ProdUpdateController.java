@@ -1,0 +1,115 @@
+package kr.or.ddit.prod.controller;
+
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import kr.or.ddit.ServiceResult;
+import kr.or.ddit.mvc.ICommandHandler;
+import kr.or.ddit.prod.dao.IOtherDAO;
+import kr.or.ddit.prod.dao.OtherDAOImpl;
+import kr.or.ddit.prod.service.IProdService;
+import kr.or.ddit.prod.service.ProdServiceImpl;
+import kr.or.ddit.vo.ProdVO;
+
+public class ProdUpdateController implements ICommandHandler {
+
+	@Override
+	public String process(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+		String method = req.getMethod();
+		IOtherDAO otherDAO = new OtherDAOImpl();
+		Map<String, Map<String, String>> lprodList = otherDAO.selectLprodList();
+		req.setAttribute("lprodList", lprodList);
+		
+		if ("get".equalsIgnoreCase(method)) {
+			String prod_id = req.getParameter("what");
+			
+			if (StringUtils.isBlank(prod_id)) {
+				resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+				return null;
+			}
+			
+			IProdService service = new ProdServiceImpl();
+			ProdVO prod = service.retrieveProd(prod_id);
+			req.setAttribute("prod", prod);
+			
+			return "prod/prodForm"; 
+			
+		} else if ("post".equalsIgnoreCase(method)) {
+			ProdVO prod = new ProdVO();
+			req.setAttribute("prod", prod);
+			try {
+				BeanUtils.populate(prod, req.getParameterMap());
+			} catch (IllegalAccessException | InvocationTargetException e) {
+				throw new RuntimeException(e);
+			}
+			
+			String view = null;
+			String message = null;
+			Map<String, String> errors = new LinkedHashMap<>();
+			req.setAttribute("errors", errors);
+			boolean valid = validate(prod, errors);
+			if (valid) {
+				IProdService service = new ProdServiceImpl();
+				ServiceResult result = service.modifyProd(prod);
+				if (ServiceResult.SUCCESS.equals(result)) {
+					view = "redirect:/prod/prodView.do?what=" + prod.getProd_id();
+				} else {
+					req.setAttribute("message", "서버오류!!");
+					view = "prod/prodForm";
+				}
+			} else {
+				view = "prod/prodForm";
+			}
+			return view;
+		} else {
+			resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+			return null;
+		}
+	}
+	
+	private boolean validate(ProdVO prod, Map<String, String> errors) {
+		boolean valid = true;
+		if (StringUtils.isBlank(prod.getProd_name())) {
+			valid = false;
+			errors.put("prod_name", "상품명 누락");
+		}
+		if (prod.getProd_cost()==null || prod.getProd_cost() < 0) {
+			valid = false;
+			errors.put("prod_cost", "코스트 누락");
+		}
+		if (prod.getProd_price()==null || prod.getProd_price() < 0) {
+			valid = false;
+			errors.put("prod_price", "프라이스 누락");
+		}
+		if (prod.getProd_sale()==null || prod.getProd_sale() < 0) {
+			valid = false;
+			errors.put("prod_sale", "세일 누락");
+		}
+		if (StringUtils.isBlank(prod.getProd_outline())) {
+			valid = false;
+			errors.put("prod_outline", "상품개요 누락");
+		}
+		if (StringUtils.isBlank(prod.getProd_img())) {
+			valid = false;
+			errors.put("prod_img", "상품이미지 누락");
+		}
+		if (prod.getProd_totalstock()==null || prod.getProd_totalstock() < 0) {
+			valid = false;
+			errors.put("prod_totalstock", "토탈스톡 누락");
+		}
+		if (prod.getProd_properstock()==null || prod.getProd_properstock() < 0) {
+			valid = false;
+			errors.put("prod_properstock", "프로퍼스톡 누락");
+		}
+		return valid;
+	}
+}

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="Buyer">
+	<sql id="searchFrag">
+		<dynamic prepend=" WHERE ">
+			<isNotEmpty property="searchWord">
+				<isEqual property="searchType" compareValue="name">
+					BUYER_NAME LIKE
+					'%'||#searchWord#||'%'
+				</isEqual>
+				<isEqual property="searchType" compareValue="address">
+					BUYER_ADD1 LIKE
+					'%'||#searchWord#||'%'
+				</isEqual>
+				<isEqual property="searchType" compareValue="all">
+					BUYER_NAME LIKE
+					'%'||#searchWord#||'%'
+					OR
+					BUYER_ADD1 LIKE '%'||#searchWord#||'%'
+				</isEqual>
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+
+	<select id="selectTotalRecord" resultClass="long" parameterClass="pagingVO">
+		SELECT COUNT(*)
+		FROM BUYER
+		<include refid="Buyer.searchFrag"/>
+	</select>
+	
+	<select id="selectBuyerList" resultClass="buyerVO" parameterClass="pagingVO">
+		SELECT A.*
+		FROM (
+			SELECT ROWNUM RNUM,
+			    BUYER_ID,    BUYER_NAME,    BUYER_LGU,    BUYER_BANK,
+			    BUYER_BANKNO,    BUYER_BANKNAME,    BUYER_ZIP,    BUYER_ADD1,
+			    BUYER_ADD2,    BUYER_COMTEL,    BUYER_FAX,    BUYER_MAIL,
+			    BUYER_CHARGER,    BUYER_TELEXT
+			FROM BUYER
+			<include refid="Buyer.searchFrag"/>
+		) A
+		<![CDATA[
+   		WHERE RNUM >= #startRow# AND RNUM <= #endRow#
+   		]]> 
+	</select>
+	
+	<select id="selectBuyer" parameterClass="String" resultClass="buyerVO">
+		SELECT
+		    BUYER_ID,    BUYER_NAME,    BUYER_LGU,    BUYER_BANK,
+		    BUYER_BANKNO,    BUYER_BANKNAME,    BUYER_ZIP,    BUYER_ADD1,
+		    BUYER_ADD2,    BUYER_COMTEL,    BUYER_FAX,    BUYER_MAIL,
+		    BUYER_CHARGER,    BUYER_TELEXT
+		FROM BUYER
+		WHERE BUYER_ID = #buyer_id#
+	</select>
+	
+	<insert id="insertBuyer" parameterClass="buyerVO">
+		<selectKey resultClass="String" keyProperty="buyer_id">
+			SELECT #buyer_lgu#||LPAD(NVL(TO_NUMBER(SUBSTR(MAX(BUYER_ID), 5)), 0) + 1, 2, '0')
+			FROM BUYER
+			WHERE BUYER_LGU = #buyer_lgu#
+		</selectKey>
+		INSERT INTO buyer (
+		    BUYER_ID,    BUYER_NAME,    BUYER_LGU,    BUYER_BANK,
+		    BUYER_BANKNO,    BUYER_BANKNAME,    BUYER_ZIP,    BUYER_ADD1,
+		    BUYER_ADD2,    BUYER_COMTEL,    BUYER_FAX,    BUYER_MAIL,
+		    BUYER_CHARGER
+		) VALUES (
+		   	#buyer_id#,    #buyer_name#,    #buyer_lgu#,    #buyer_bank#,
+		    #buyer_bankno#,    #buyer_bankname#,    #buyer_zip#,    #buyer_add1#,
+		    #buyer_add2#,    #buyer_comtel#,    #buyer_fax#,    #buyer_mail#,
+		    #buyer_charger#
+		)
+	</insert>
+</sqlMap>

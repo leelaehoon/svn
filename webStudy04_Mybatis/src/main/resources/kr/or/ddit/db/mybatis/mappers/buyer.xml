@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.buyer.dao.IBuyerDAO">
+	<sql id="searchFrag">
+		<where>
+			<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchWord)">
+				<if test="searchType.equals('name')">
+					BUYER_NAME LIKE '%'||#{searchWord}||'%'
+				</if>
+				<if test="searchType.equals('address')">
+					BUYER_ADD1 LIKE '%'||#{searchWord}||'%'
+				</if>
+				<if test="searchType.equals('all')">
+					BUYER_NAME LIKE '%'||#{searchWord}||'%'
+					OR
+					BUYER_ADD1 LIKE '%'||#{searchWord}||'%'
+				</if>
+			</if>
+		</where>
+	</sql>
+
+	<select id="selectTotalRecord" parameterType="pagingVO" resultType="long">
+		SELECT COUNT(*)
+		FROM BUYER
+		<include refid="searchFrag"/>
+	</select>
+	
+	<select id="selectBuyerList" parameterType="pagingVO" resultType="buyerVO">
+		SELECT A.*
+		FROM (
+			SELECT ROWNUM RNUM,
+			    BUYER_ID,    BUYER_NAME,    BUYER_LGU,    BUYER_BANK,
+			    BUYER_BANKNO,    BUYER_BANKNAME,    BUYER_ZIP,    BUYER_ADD1,
+			    BUYER_ADD2,    BUYER_COMTEL,    BUYER_FAX,    BUYER_MAIL,
+			    BUYER_CHARGER,    BUYER_TELEXT
+			FROM BUYER
+			<include refid="searchFrag"/>
+		) A
+		<![CDATA[
+   		WHERE RNUM >= #startRow# AND RNUM <= #endRow#
+   		]]> 
+	</select>
+	
+	
+</mapper>
