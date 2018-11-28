@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     
-<ul>
+<ul class="nav navbar-nav">
 	<li><a href="<%=request.getContextPath() %>/member/memberList.do">회원관리</a></li>
 	<li><a href="<%=request.getContextPath() %>/prod/prodList.do">상품관리</a></li>
 	<li><a href="<%=request.getContextPath() %>/buyer/buyerList.do">거래처관리</a></li>

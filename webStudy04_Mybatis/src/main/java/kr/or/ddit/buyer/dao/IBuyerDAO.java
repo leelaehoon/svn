@@ -6,7 +6,7 @@ import kr.or.ddit.vo.BuyerVO;
 import kr.or.ddit.vo.PagingInfoVO;
 
 public interface IBuyerDAO {
-	public String insertBuyer(BuyerVO buyer);
+	public int insertBuyer(BuyerVO buyer);
 	public BuyerVO selectBuyer(String buyer_id);
 	public long selectTotalRecord(PagingInfoVO<BuyerVO> pagingVO);
 	public List<BuyerVO> selectBuyerList(PagingInfoVO<BuyerVO> pagingVO);

@@ -27,56 +27,64 @@
 <head>
 <meta charset="UTF-8">
 <title>/index.jsp</title>
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-<link rel="stylesheet" href="https://jqueryui.com/resources/demos/style.css">
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-3.3.1.min.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+<link href="<%=request.getContextPath() %>/css/main.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
-<div id="top">
-	<jsp:include page="/includee/header.jsp" />
-</div>
-<div id="left">
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">Logo</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+		<jsp:include page="/includee/header.jsp" />
+      <ul class="nav navbar-nav navbar-right">
+	      <%
+	      	if (authMember==null) {
+	      %>
+        	<li><a href="<%=request.getContextPath() %>/login/loginForm.jsp"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+          <%
+	      	} else {          
+          %>
+        	<li><a href="<%=request.getContextPath() %>/member/mypage.do"><span class="glyphicon glyphicon-user"></span> MyPage</a></li>
+        	<li><a href="<%=request.getContextPath() %>/login/logout.jsp"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+          <%
+	      	}
+          %>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid text-center">    
+  <div class="row content">
 	<jsp:include page="/includee/left.jsp" />
-</div>
-
-
-<div id="body">
-<%
-	if(StringUtils.isNotBlank(includePage)){
-		pageContext.include(includePage);
-	} else {
-		%>
-		<h4>웰컴 페이지</h4>
-		<pre>
-			처음부터 웰컴 페이지로 접속하거나,
-			로그인에 성공해서 웰컴 페이지로 접속하는 경우의 수가 있음.
-			
-			<%
-				if(authMember!=null){
-					%>
-				<a href="<%=request.getContextPath() %>/member/mypage.do"><%=authMember.getMem_name() %></a>님(<%=authMember.getMem_auth() %>), <a href="<%=request.getContextPath() %>/login/logout.jsp">로그아웃</a>
-					<%			
-				}else{
-					%>
-				<a href="<%=request.getContextPath() %>/login/loginForm.jsp">로그인 하러가기</a>
-					<%
-				}
-			%>
-		</pre>
+    <div class="col-sm-10 text-left"> 
+	    <div id="body">
 		<%
-	}
-%>
+			if(StringUtils.isNotBlank(includePage)){
+				pageContext.include(includePage);
+			} else {
+				
+			}
+		%>
+		</div>
+    </div>
+  </div>
 </div>
 
-
-<div id="footer">
+<footer class="container-fluid text-center">
 	<%
 		pageContext.include("/includee/footer.jsp");
 	%>
-</div>
+</footer>
+
 </body>
 </html>

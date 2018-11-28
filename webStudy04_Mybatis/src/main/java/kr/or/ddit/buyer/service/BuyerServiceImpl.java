@@ -16,7 +16,7 @@ public class BuyerServiceImpl implements IBuyerService {
 	public ServiceResult createBuyer(BuyerVO buyer) {
 		ServiceResult result = ServiceResult.FAILED;
 				
-		if (buyerDAO.insertBuyer(buyer)!=null) {
+		if (buyerDAO.insertBuyer(buyer)>0) {
 			result = ServiceResult.SUCCESS;
 		}
 		

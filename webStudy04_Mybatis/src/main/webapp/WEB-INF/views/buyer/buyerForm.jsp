@@ -46,10 +46,10 @@
 				<select name="buyer_lgu">
 					<option value="">상품분류선택</option>
 					<%
-						Map<String, String> lprodList = (Map) request.getAttribute("lprodList");
-						for (Entry<String,String> entry : lprodList.entrySet()) {
+						Map<String, Map<String, String>> lprodList = (Map) request.getAttribute("lprodList");
+						for (Entry<String, Map<String, String>> tmp : lprodList.entrySet()) {
 							%>
-							<option value="<%=entry.getKey() %>"><%=entry.getValue() %></option>
+							<option value="<%=tmp.getKey() %>"><%=tmp.getValue().get("LPROD_NM") %></option> 
 							<%
 						}
 					%>
