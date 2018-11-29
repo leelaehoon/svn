@@ -1,19 +1,6 @@
-<%@page import="java.util.Objects"%>
-<%@page import="java.util.Map.Entry"%>
-<%@page import="kr.or.ddit.vo.BuyerVO"%>
-<%@page import="java.util.Map"%>
-<%@page import="kr.or.ddit.vo.ProdVO"%>
-<%@page import="java.util.List"%>
-<%@page import="kr.or.ddit.vo.PagingInfoVO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%
-	PagingInfoVO<ProdVO> pagingVO = (PagingInfoVO<ProdVO>) request.getAttribute("pagingVO");
-	List<ProdVO> prodList = pagingVO.getDataList();
-	
-	Map<String, Map<String, String>> lprodList = (Map<String, Map<String, String>>) request.getAttribute("lprodList");
-	List<BuyerVO> buyerList = (List) request.getAttribute("buyerList");
-%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,7 +11,7 @@
 	integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
 	crossorigin="anonymous">
 <script type="text/javascript"
-	src="<%=request.getContextPath()%>/js/jquery-3.3.1.min.js"></script>
+	src="${pageContext.request.contextPath}/js/jquery-3.3.1.min.js"></script>
 <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
 	integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
@@ -34,11 +21,9 @@
 	integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
 	crossorigin="anonymous"></script>
 <script type="text/javascript">
-	function <%=pagingVO.getFuncName()%>(page) {
+	function ${pagingVO.funcName}(page) {
 		$("[name='searchForm']").find("[name='page']").val(page);
-// 		document.searchForm.page.value = page;
 		$("[name='searchForm']").submit();
-// 		document.searchForm.submit();
 	}
 	
 	$(function () {
@@ -66,7 +51,7 @@
 		
 		$("#listBody").on("click", "tr", function () {
 			var prod_id = $(this).find("td:first").text();
-			location.href = "<%=request.getContextPath()%>/prod/prodView.do?what=" + prod_id;
+			location.href = "${pageContext.request.contextPath}/prod/prodView.do?what=" + prod_id;
 		});
 		
 		$("[name='searchForm']").on("submit", function (event) {
@@ -123,25 +108,17 @@
 			<div class="col-xs-2">
 				<select name="prod_lgu" class="form-control">
 					<option value="">분류</option>
-					<%
-						for (Entry<String, Map<String, String>> tmp : lprodList.entrySet()) {
-							%>
-							<option value="<%=tmp.getKey() %>"><%=tmp.getValue().get("LPROD_NM") %></option> 
-							<%
-						}
-					%>
+					<c:forEach items="${lprodList.entrySet() }" var="tmp">
+						<option value="${tmp.key}">${tmp.value["LPROD_NM"]}</option> 
+					</c:forEach>
 				</select>
 			</div>
 			<div class="col-xs-2">
 				<select name="prod_buyer" class="form-control">
 					<option value="">거래처선택</option>
-					<%
-						for (BuyerVO buyer : buyerList) {
-							%>
-							<option value="<%=buyer.getBuyer_id() %>" class="<%=buyer.getBuyer_lgu() %>" ><%=buyer.getBuyer_name() %></option>
-							<%
-						}
-					%>
+					<c:forEach items="${buyerList }" var="buyer">
+						<option value="${buyer.buyer_id}" class="${buyer.buyer_lgu}" >${buyer.buyer_name}</option>
+					</c:forEach>
 				</select>
 			</div>
 			<div class="col-xs-2">
@@ -151,7 +128,7 @@
 				<input type="submit" value="검색" class="btn btn-primary" />
 			</div>
 			<div class="col-xs-2">
-				<input type="button" class="btn btn-info" value="신규상품등록" onclick="location.href='<%=request.getContextPath() %>/prod/prodInsert.do';" />
+				<input type="button" class="btn btn-info" value="신규상품등록" onclick="location.href='${pageContext.request.contextPath}/prod/prodInsert.do';" />
 			</div>
 		</div>
 	</form>
@@ -169,34 +146,29 @@
 			</tr>
 		</thead>
 		<tbody id="listBody">
-			<% if (prodList.size()>0) {
-				
-			
-				for (ProdVO prod : prodList) {
-			%>
-			<tr>
-				<td><%=prod.getProd_id()%></td>
-				<td><%=prod.getProd_name()%></td>
-				<td><%=prod.getLprod_nm()%></td>
-				<td><%=prod.getBuyer_name()%></td>
-				<td><%=prod.getProd_price()%></td>
-				<td><%=prod.getProd_outline()%></td>
-				<td><%=prod.getProd_mileage()%></td>
-			</tr>
-			<%
-				}
-			} else {
-				%>
+			<c:set var="prodList" value="${pagingVO.dataList }" />
+			<c:if test="${not empty prodList }">
+				<c:forEach items="${prodList }" var="prod">
+					<tr>
+						<td>${prod.prod_id}</td>
+						<td>${prod.prod_name}</td>
+						<td>${prod.lprod_nm}</td>
+						<td>${prod.buyer_name}</td>
+						<td>${prod.prod_price}</td>
+						<td>${prod.prod_outline}</td>
+						<td>${prod.prod_mileage}</td>
+					</tr>
+				</c:forEach>
+			</c:if>
+			<c:if test="${empty prodList }">
 				<tr><td colspan="7">상품정보가 없습니다.</td></tr>
-				<%
-			}
-			%>
+			</c:if>
 		</tbody>
 		<tfoot>
 			<tr>
 				<td colspan="7">
 					<nav aria-label="Page navigation example" id="pagingNav">
-						<%=pagingVO.getPagingHTML()%>
+						${pagingVO.pagingHTML}
 					</nav>
 				</td>
 			</tr>

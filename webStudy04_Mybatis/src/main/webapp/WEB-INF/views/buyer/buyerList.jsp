@@ -1,14 +1,6 @@
-<%@page import="java.util.Objects"%>
-<%@page import="oracle.net.aso.b"%>
-<%@page import="kr.or.ddit.vo.PagingInfoVO"%>
-<%@page import="kr.or.ddit.vo.BuyerVO"%>
-<%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%
-	PagingInfoVO<BuyerVO> pagingVO = (PagingInfoVO<BuyerVO>) request.getAttribute("pagingVO");
-	List<BuyerVO> buyerList = pagingVO.getDataList();
-%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,7 +11,7 @@
 	integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
 	crossorigin="anonymous">
 <script type="text/javascript"
-	src="<%=request.getContextPath()%>/js/jquery-3.3.1.min.js"></script>
+	src="${pageContext.request.contextPath}/js/jquery-3.3.1.min.js"></script>
 <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
 	integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
@@ -29,7 +21,7 @@
 	integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
 	crossorigin="anonymous"></script>
 <script type="text/javascript">
-	function <%=pagingVO.getFuncName()%>(page) {
+	function ${pagingVO.funcName}(page) {
 		document.searchForm.page.value = page;
 		document.searchForm.submit();
 	}
@@ -37,7 +29,7 @@
 	$(function () {
 		$("#listBody").on("click", "tr", function () {
 			var buyer_id = $(this).find("td:first").text();
-			location.href = "<%=request.getContextPath()%>/buyer/buyerView.do?what=" + buyer_id;
+			location.href = "${pageContext.request.contextPath}/buyer/buyerView.do?what=" + buyer_id;
 		});
 	});
 </script>
@@ -48,7 +40,7 @@
 </style>
 </head>
 <body class="container">
-<input type="button" class="btn btn-primary" value="신규등록" onclick="location.href='<%=request.getContextPath()%>/buyer/buyerInsert.do'"/>
+<input type="button" class="btn btn-primary" value="신규등록" onclick="location.href='${pageContext.request.contextPath}/buyer/buyerInsert.do'"/>
 <table class="table table-hover">
 	<thead class="thead-dark">
 		<tr>
@@ -60,31 +52,29 @@
 		</tr>
 	</thead>
 	<tbody id="listBody">
-		<%
-			if (buyerList.size() > 0) {
-				for (BuyerVO buyer : buyerList) {
-					%>
+		<c:set var="buyerList" value="${pagingVO.dataList }"/>
+		<c:choose>
+			<c:when test="${not empty buyerList }">
+				<c:forEach items="${buyerList }" var="buyer">
 					<tr>
-						<td><%=buyer.getBuyer_id() %></td>
-						<td><%=buyer.getBuyer_name() %></td>
-						<td><%=buyer.getAddress() %></td>
-						<td><%=buyer.getBuyer_comtel() %></td>
-						<td><%=buyer.getBuyer_charger() %></td>
+						<td>${buyer.buyer_id}</td>
+						<td>${buyer.buyer_name}</td>
+						<td>${buyer.address}</td>
+						<td>${buyer.buyer_comtel}</td>
+						<td>${buyer.buyer_charger}</td>
 					</tr>
-					<%					
-				}
-			} else {
-				%>
+				</c:forEach>
+			</c:when>
+			<c:otherwise>
 				<tr><td colspan="5">거래처 정보가 없습니다.</td></tr>
-				<%
-			}
-		%>	
+			</c:otherwise>
+		</c:choose>
 	</tbody>
 	<tfoot>
 			<tr>
 				<td colspan="6">
 					<nav aria-label="Page navigation example">
-						<%=pagingVO.getPagingHTML() %>
+						${pagingVO.pagingHTML}
 					</nav>
 					<form name="searchForm">
 						<div class="form-group row">
@@ -97,10 +87,10 @@
 								</select>
 							</div>
 							<script type="text/javascript">
-								document.searchForm.searchType.value = "<%=Objects.toString(pagingVO.getSearchType(), "all")%>";
+								document.searchForm.searchType.value = "${empty pagingVO.searchType ? 'all':pagingVO.searchType}";
 							</script>
 							<div class="col-xs-2">
-								<input type="text" name="searchWord" class="form-control" value="<%=Objects.toString(pagingVO.getSearchWord(), "") %>"/>
+								<input type="text" name="searchWord" class="form-control" value="${pagingVO.searchWord}"/>
 							</div>
 							<div class="col-xs-2">
 								<input type="submit" value="검색" class="button btn btn-info" />
