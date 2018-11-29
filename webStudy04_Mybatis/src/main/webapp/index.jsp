@@ -50,7 +50,7 @@
       <ul class="nav navbar-nav navbar-right">
       	<c:choose>
       		<c:when test="${empty sessionScope.authMember }">
-        	<li><a href="${pageContext.request.contextPath}/login/loginForm.jsp"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+        		<li><a href="${pageContext.request.contextPath}/login/loginForm.jsp"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
       		</c:when>
       		<c:otherwise>
 	        	<li><a href="${pageContext.request.contextPath}/member/mypage.do"><span class="glyphicon glyphicon-user"></span> MyPage</a></li>

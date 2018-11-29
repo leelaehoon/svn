@@ -5,9 +5,13 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/semantic.min.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/semantic.min.js"></script>
 </head>
 <body>
-	<table>
+<div class="ui raised very padded text container segment">
+	<table class="ui inverted grey table">
 		<tr>
 			<th>거래처코드</th>
 			<td>${buyer.buyer_id}</td>
@@ -65,5 +69,6 @@
 			<td>${buyer.buyer_telext}</td>
 		</tr>
 	</table>
+</div>
 </body>
 </html>
