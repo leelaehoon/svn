@@ -1,7 +1,8 @@
 <%@page import="java.util.Arrays"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
+    pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -53,11 +54,34 @@
 				<c:forEach items="${sampleList }" var="element">
 					<span>${element }</span>
 				</c:forEach>
+				forTokens : 문장(items), 구분자(delims), 토큰에 대한 레퍼런스 속성(var)
+				<c:forTokens items="1,2,3,4,5" delims="," var="token" varStatus="vs">
+					<c:if test="${vs.first }">
+						<span style="color:red">${token * 1000}</span>
+					</c:if>
+					<c:if test="${not vs.first }">
+						<span>${token * 1000}</span>
+					</c:if>
+				</c:forTokens>
 		3) URL 재처리(Rewrite)
-		4) 기타기능
+			- client-side방식의 절대 경로, 쿼리스트링, url rewriting 처리...
+			<c:url value="/member/memberView.do" var="viewURL">
+				<c:param name="who" value="aginor" />
+			</c:url>
+			${viewURL }
+		4) 기타기능 : redirect, import, out
+<%-- 			<c:redirect url="/member/memberList.do" context="/webStudy01" /> --%>
+<%-- 			<c:import url="https://www.naver.com" var="naver"></c:import> --%>
+<%-- 			<c:out value="${naver }" escapeXml="false"></c:out> --%>
 	2. Fmt tag
 	3. Fn library
-	 
+	<c:set var="target" value="ABC123DEF" />
+	<c:set var="search" value="123" />
+	<c:set var="targetArray" value='<%=new String[]{"ab", "cd", "ef"} %>'/>
+	${fn:substringAfter(target, search) }
+	${fn:substringBefore(target, search) }
+	${fn:join(targetArray, "|") }
+	${fn:containsIgnoreCase(target, "abc") }
 </pre>
 </body>
 </html>

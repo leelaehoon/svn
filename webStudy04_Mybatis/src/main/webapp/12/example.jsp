@@ -31,6 +31,28 @@
 </head>
 <body>
 	<form class="container">
+		<div class="col-xs-2">
+			주소입력 : <input class="form-control" type="url" name="siteUrl" value="${param.siteUrl }" placeholder="https://www.naver.com" />
+		</div>
+		<div class="col-xs-2">
+			<div class="checkbox">
+				<label><input type="checkbox" name="toSource" value="source" ${param.toSource eq 'source' ? "checked":"" }/>소스로보기</label>
+			</div>
+		</div>
+		<div class="col-xs-2">
+			<input class="btn btn-defalut" type="submit" value="GO!!!" />
+		</div>
+	</form>
+		
+	<c:if test="${not empty param.siteUrl }">
+		<c:import url="${view }" var="site" />
+	
+		<div style="border: 1px solid black;">
+			<c:out value="${site }" escapeXml="${param.toSource eq 'source' }" />
+		</div>
+	</c:if>
+	
+	<form class="container">
 		<div class="form-group row">
 			<div class="col-xs-2">
 				최소단 : <input class="form-control" type="number" min="1" max="100" value="${param.minDan }" name="minDan"/>
