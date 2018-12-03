@@ -12,10 +12,11 @@
 <!-- 클라이언트로부터 이미지를 업로드 받고, 다시 현재 페이지로 돌아와서 -->
 <!-- 하단의 div 태그내에 해당 이미지가 출력되도록.. -->
 <!-- 단, 이미지 파일의 메타데이터들도 함께 출력되도록 -->
-<form action="<c:url value='/upload_2' />" method="post" enctype="multipart/form-data" >
+<form action="<c:url value='/upload_3' />" method="post" enctype="multipart/form-data" >
 	<ul>
 		<li>
 			업로더: <input type="text" name="uploader" />
+			<input type="text" name="test" />
 		</li>
 		<li>
 			업로드할 파일 : <input type="file" name="uploadFile" />

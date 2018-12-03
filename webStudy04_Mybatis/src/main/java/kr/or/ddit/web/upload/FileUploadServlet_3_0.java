@@ -20,6 +20,7 @@ import javax.servlet.http.Part;
 
 import org.apache.commons.lang3.StringUtils;
 
+import kr.or.ddit.filter.wrapper.FileUploadRequestWrapper;
 import kr.or.ddit.vo.FileVO;
 
 //@WebServlet("/upload")
@@ -36,9 +37,7 @@ public class FileUploadServlet_3_0 extends HttpServlet {
 		if (!saveFolder.exists()) {
 			saveFolder.mkdirs();
 		}
-		
 		String uploader = req.getParameter("uploader");
-		
 		Part uploadFile = req.getPart("uploadFile");
 		String fileMime = uploadFile.getContentType();
 		if (!StringUtils.startsWithIgnoreCase(fileMime, "image/")) {
@@ -51,7 +50,6 @@ public class FileUploadServlet_3_0 extends HttpServlet {
 		int idx = header.lastIndexOf("filename=") + "filename=".length();
 		String originalFileName = header.substring(idx).replace("\"", "");
 		String saveName = UUID.randomUUID().toString();
-		
 		// Middle tier에 파일의 body를 저장
 		File saveFile = new File(saveFolder, saveName);
 		byte[] buffer = new byte[1024];
