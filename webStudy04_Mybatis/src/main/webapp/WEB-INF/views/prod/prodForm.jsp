@@ -71,7 +71,7 @@
 </script>
 </head>
 <body>
-	<form method="post" class="container">
+	<form method="post" class="container" enctype="multipart/form-data">
 		<table class="table">
 			<tr>
 				<th>상품명</th>
@@ -135,7 +135,7 @@
 					</div></td>
 			</tr>
 			<tr>
-				<th>상품디테일</th>
+				<th>상세정보</th>
 				<td><div class="input-group">
 						<input class="form-control" type="text" name="prod_detail"
 							value="${prod.prod_detail}" /><span
@@ -145,13 +145,12 @@
 			<tr>
 				<th>상품이미지</th>
 				<td><div class="input-group">
-						<input class="form-control" type="text" name="prod_img"
-							value="${prod.prod_img}" /><span
-							class="input-group-text" class="error">${errors["prod_img"]}</span>
+						<input class="form-control" type="file" name="prod_image"/>
+						<span class="input-group-text" class="error">${errors["prod_image"]}</span>
 					</div></td>
 			</tr>
 			<tr>
-				<th>토탈스톡</th>
+				<th>재고량</th>
 				<td><div class="input-group">
 						<input class="form-control" type="text" name="prod_totalstock"
 							value="${prod.prod_totalstock}" /><span
@@ -159,7 +158,7 @@
 					</div></td>
 			</tr>
 			<tr>
-				<th>인스데이트</th>
+				<th>입고일</th>
 				<td><div class="input-group">
 						<input class="form-control datepicker" type="text" name="prod_insdate"
 							value="${prod.prod_insdate}" /><span

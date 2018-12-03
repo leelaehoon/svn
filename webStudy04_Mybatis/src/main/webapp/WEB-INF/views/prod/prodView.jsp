@@ -83,7 +83,9 @@
 		</tr>
 		<tr>
 			<th>상품이미지</th>
-			<td>${prod.prod_img}</td>
+			<td>
+				<img src="<c:url value='/prodImages/${prod.prod_img}' />" />
+			</td>
 		</tr>
 		<tr>
 			<th>토탈스톡</th>

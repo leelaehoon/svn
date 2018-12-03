@@ -1,18 +1,24 @@
 package kr.or.ddit.prod.controller;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import kr.or.ddit.ServiceResult;
+import kr.or.ddit.filter.wrapper.FileUploadRequestWrapper;
 import kr.or.ddit.mvc.ICommandHandler;
 import kr.or.ddit.prod.dao.IOtherDAO;
 import kr.or.ddit.prod.dao.OtherDAOImpl;
@@ -58,6 +64,25 @@ public class ProdUpdateController implements ICommandHandler {
 			req.setAttribute("errors", errors);
 			boolean valid = validate(prod, errors);
 			if (valid) {
+				if (req instanceof FileUploadRequestWrapper) {
+					String prodImagesUrl = "/prodImages";
+					String prodImagesPath = req.getServletContext().getRealPath(prodImagesUrl);
+					File prodImagesFolder = new File(prodImagesPath);
+					if (prodImagesFolder.exists()) {
+						prodImagesFolder.mkdirs();
+					}
+					FileItem fileItem = ((FileUploadRequestWrapper) req).getFileItem("prod_image");
+					if (fileItem!=null) {
+						String saveName = UUID.randomUUID().toString();
+						File saveFile = new File(prodImagesFolder, saveName);
+						try (
+							InputStream in = fileItem.getInputStream();
+						) {
+							FileUtils.copyInputStreamToFile(in, saveFile);
+						}
+						prod.setProd_img(saveName);
+					}
+				}
 				IProdService service = new ProdServiceImpl();
 				ServiceResult result = service.modifyProd(prod);
 				if (ServiceResult.SUCCESS.equals(result)) {
@@ -97,10 +122,6 @@ public class ProdUpdateController implements ICommandHandler {
 		if (StringUtils.isBlank(prod.getProd_outline())) {
 			valid = false;
 			errors.put("prod_outline", "상품개요 누락");
-		}
-		if (StringUtils.isBlank(prod.getProd_img())) {
-			valid = false;
-			errors.put("prod_img", "상품이미지 누락");
 		}
 		if (prod.getProd_totalstock()==null || prod.getProd_totalstock() < 0) {
 			valid = false;

@@ -78,7 +78,7 @@
 		) VALUES (
 		  	#{prod_id},    #{prod_name},    #{prod_lgu},    #{prod_buyer},
 		    #{prod_cost},    #{prod_price},    #{prod_sale},    #{prod_outline},
-		    #{prod_detail},    #{prod_img},    #{prod_totalstock},    TO_DATE(#{prod_insdate}, 'YYYY-MM-DD'),
+		    #{prod_detail},    #{prod_img,jdbcType=VARCHAR},    #{prod_totalstock},    TO_DATE(#{prod_insdate,jdbcType=DATE}, 'YYYY-MM-DD'),
 		    #{prod_properstock},    #{prod_size},    #{prod_color},    #{prod_delivery},
 		    #{prod_unit},    #{prod_qtyin},    #{prod_qtysale},    #{prod_mileage}
 		)
@@ -92,7 +92,6 @@
 			PROD_SALE = #{prod_sale},
 			PROD_OUTLINE = #{prod_outline},
 			PROD_DETAIL = #{prod_detail},
-			PROD_IMG = #{prod_img},
 			PROD_TOTALSTOCK = #{prod_totalstock},
 			PROD_PROPERSTOCK = #{prod_properstock},
 			PROD_SIZE = #{prod_size},
@@ -102,6 +101,9 @@
 			PROD_QTYIN = #{prod_qtyin},
 			PROD_QTYSALE = #{prod_qtysale},
 			PROD_MILEAGE = #{prod_mileage}
+			<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(prod_img)">
+			, PROD_IMG = #{prod_img}
+			</if>
 		WHERE PROD_ID = #{prod_id}
 	</update>
 </mapper>

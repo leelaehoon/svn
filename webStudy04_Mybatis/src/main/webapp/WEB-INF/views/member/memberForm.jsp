@@ -27,7 +27,7 @@
 </head>
 <body>
 	<h4>회원 가입</h4>
-	<form method="post">
+	<form method="post" enctype="multipart/form-data">
 		<table class="table">
 			<tr>
 				<th>회원아이디</th>
