@@ -16,7 +16,6 @@
 	<ul>
 		<li>
 			업로더: <input type="text" name="uploader" />
-			<input type="text" name="test" />
 		</li>
 		<li>
 			업로드할 파일 : <input type="file" name="uploadFile" />

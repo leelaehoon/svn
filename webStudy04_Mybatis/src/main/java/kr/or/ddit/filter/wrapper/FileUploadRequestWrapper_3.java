@@ -27,14 +27,12 @@ public class FileUploadRequestWrapper_3 extends HttpServletRequestWrapper {
 	
 	private void parseRequest(HttpServletRequest request) throws IOException, ServletException {
 		Collection<Part> parts = request.getParts();
-		
-		Iterator<Part> it = parts.iterator();
-		while (it.hasNext()) {
-			Part part = it.next();
-			if (part!=null) {
+		if (parts!=null) {
+			Iterator<Part> it = parts.iterator();
+			while (it.hasNext()) {
+				Part part = it.next();
 				partMap.put(part.getName(), part);
 			}
-			
 		}
 	}
 	

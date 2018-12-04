@@ -56,7 +56,14 @@ public class BuyerDAOImpl implements IBuyerDAO {
 
 	@Override
 	public int updateBuyer(BuyerVO buyer) {
-		return 0;
+		try (
+				SqlSession session = sqlSessionFactory.openSession(false);
+				) {
+			IBuyerDAO mapper = session.getMapper(IBuyerDAO.class);
+			int rowCnt = mapper.updateBuyer(buyer);
+			if (rowCnt>0) session.commit();
+			return rowCnt;
+		}
 	}
 	
 }

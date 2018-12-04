@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -70,5 +71,9 @@
 		</tr>
 	</table>
 </div>
+	<c:set var="authorized" value="${not empty sessionScope.authMember and 'ROLE_ADMIN' eq sessionScope.authMember.mem_auth }"/>
+	<c:if test="${authorized }">
+		<input class="btn btn-success" type="button" value="상품수정" onclick="location.href='${pageContext.request.contextPath}/buyer/buyerUpdate.do?what=${buyer.buyer_id}'"/>
+	</c:if>
 </body>
 </html>

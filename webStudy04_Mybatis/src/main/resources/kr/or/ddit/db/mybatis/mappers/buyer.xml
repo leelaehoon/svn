@@ -70,5 +70,15 @@
 		)
 	</insert>
 	
+	<update id="updateBuyer" parameterType="buyerVO">
+		UPDATE BUYER 
+		SET 
+			BUYER_NAME = #{buyer_name}, BUYER_BANK = #{buyer_bank},
+		    BUYER_BANKNO = #{buyer_bankno},    BUYER_BANKNAME = #{buyer_bankname},    BUYER_ZIP = BUYER_ZIP,    BUYER_ADD1 = BUYER_ADD1,
+		    BUYER_ADD2 = #{buyer_add2},    BUYER_COMTEL = #{buyer_comtel},    BUYER_FAX = #{buyer_fax},    BUYER_MAIL = #{buyer_mail},
+		    BUYER_CHARGER = #{buyer_charger}
+		WHERE
+			BUYER_ID = #{buyer_id}
+	</update>
 	
 </mapper>

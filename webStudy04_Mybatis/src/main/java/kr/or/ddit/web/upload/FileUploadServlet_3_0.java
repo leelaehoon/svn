@@ -4,15 +4,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,7 +14,6 @@ import javax.servlet.http.Part;
 
 import org.apache.commons.lang3.StringUtils;
 
-import kr.or.ddit.filter.wrapper.FileUploadRequestWrapper;
 import kr.or.ddit.vo.FileVO;
 
 //@WebServlet("/upload")
@@ -44,7 +37,6 @@ public class FileUploadServlet_3_0 extends HttpServlet {
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
-		
 //		Content-Disposition: form-data; name="uploadFile"; filename="Penguins.jpg"
 		String header = uploadFile.getHeader("Content-Disposition");
 		int idx = header.lastIndexOf("filename=") + "filename=".length();
@@ -62,10 +54,8 @@ public class FileUploadServlet_3_0 extends HttpServlet {
 				fos.write(buffer, 0, pointer);
 			}
 		}
-		
 		// Database에 파일의 메타데이터를 저장
 		long fileSize = uploadFile.getSize();
-		
 		System.out.printf("데이터베이스에 저장할 메타데이터 : 업로더(%s), 원본명(%s),\n 파일크기(%d), 파일종류(%s), 저장위치(%s), 저장URL(%s)", uploader, originalFileName, fileSize, fileMime, saveFile.getAbsolutePath(), saveUrl+"/"+saveName);
 		FileVO fileVO = new FileVO();
 		fileVO.setUploader(uploader);

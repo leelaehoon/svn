@@ -20,11 +20,13 @@
 		</c:if>
 		
 		$("[name='buyer_lgu']").val("${buyer.buyer_lgu}");
+		
+		
 	})
 </script>
 </head>
 <body>
-<form action="${pageContext.request.contextPath}/buyer/buyerInsert.do" method="post" class="form-horizontal">
+<form method="post" class="form-horizontal">
 	<table class="table">
 		<tr>
 			<th>거래처명</th>

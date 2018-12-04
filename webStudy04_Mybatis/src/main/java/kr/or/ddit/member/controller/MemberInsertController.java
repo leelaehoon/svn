@@ -1,6 +1,8 @@
 package kr.or.ddit.member.controller;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -15,10 +17,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import kr.or.ddit.CommonException;
 import kr.or.ddit.ServiceResult;
+import kr.or.ddit.filter.wrapper.FileUploadRequestWrapper;
 import kr.or.ddit.member.service.IMemberService;
 import kr.or.ddit.member.service.MemberServiceImpl;
 import kr.or.ddit.mvc.ICommandHandler;
@@ -59,6 +64,12 @@ public class MemberInsertController implements ICommandHandler {
 		req.setAttribute("errors", errors);
 		boolean valid = validate(member, errors);
 		if (valid) {
+			if (req instanceof FileUploadRequestWrapper) {
+				FileItem fileItem = ((FileUploadRequestWrapper) req).getFileItem("mem_image");
+				if (fileItem!=null) {
+					member.setMem_img(fileItem.get());
+				}
+			}
 			IMemberService service = new MemberServiceImpl();
 			ServiceResult result = service.registMember(member);
 			switch (result) {

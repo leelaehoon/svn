@@ -11,5 +11,5 @@ public interface IBuyerService {
 	public BuyerVO retrieveBuyer(String buyer_id);
 	public long retrieveBuyerCount(PagingInfoVO<BuyerVO> pagingVO);
 	public List<BuyerVO> retrieveBuyerList(PagingInfoVO<BuyerVO> pagingVO);
-	public int modifyBuyer(BuyerVO buyer);
+	public ServiceResult modifyBuyer(BuyerVO buyer);
 }

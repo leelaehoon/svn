@@ -45,6 +45,12 @@
 					value="${member.mem_name}" /><span class="error">${errors["mem_name"]}</span></td>
 			</tr>
 			<tr>
+				<th>회원이미지</th>
+				<td>
+					<input type="file" name="mem_image" accept="image/*"/>
+				</td>
+			</tr>
+			<tr>
 				<th>주민번호1</th>
 				<td><input type="text" name="mem_regno1"
 					value="${member.mem_regno1}" /><span class="error">${errors["mem_regno1"]}</span></td>

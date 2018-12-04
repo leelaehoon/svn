@@ -13,7 +13,18 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-
+<style type="text/css">
+	#imageArea {
+		float: right;
+		width: 150px;
+		height: 200px;
+		border: 1px solid black;
+	}
+	#imageArea>img {
+		width: 100%;
+		height: 100%;
+	}
+</style>
 <script type="text/javascript">
 	$(function () {
 		<c:if test="${not empty message}">
@@ -34,6 +45,24 @@
 				}
 			}
 		})
+		
+		var imageArea = $("#imageArea");
+		
+		$('[name="mem_image"]').on("change", function () {
+			var files = $(this).prop("files")
+			if (!files) return
+			for (var idx = 0; idx < files.length; idx++) {
+// 				console.log(files[idx])
+				var reader = new FileReader();
+				reader.onloadend = function (event) {
+// 					console.log(event.target.result)
+					var imgTag = new Image();
+					imgTag.src = event.target.result;
+					imageArea.html(imgTag);
+				}
+				reader.readAsDataURL(files[idx]);
+			}
+		})
 	})
 </script>
 </head>
@@ -49,7 +78,7 @@
 			<input type="hidden" name="mem_id" value="${member.mem_id}" />
 			<input type="hidden" name="mem_pass" />
 		</form>
-	<form action="${pageContext.request.contextPath}/member/memberUpdate.do" method="post">
+	<form action="${pageContext.request.contextPath}/member/memberUpdate.do" method="post" enctype="multipart/form-data">
 	</c:if>
 	<table class="table table-sm table-hover">
 		<tr>
@@ -66,6 +95,17 @@
 			<th>회원명</th>
 			<td><input type="text" name="mem_name"
 				value="${member.mem_name}" /><span class="error">${errors["mem_name"]}</span></td>
+		</tr>
+		<tr>
+			<th>회원이미지</th>
+			<td>
+				<input type="file" name="mem_image" accept="image/*"/>
+				<div id="imageArea">
+					<c:if test="${not empty member.mem_img }">
+						<img src="data:image/*;base64,${member.mem_imgToBase64 }" />
+					</c:if>
+				</div>
+			</td>
 		</tr>
 		<tr>
 			<th>주민번호1</th>

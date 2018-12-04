@@ -43,8 +43,15 @@ public class BuyerServiceImpl implements IBuyerService {
 	}
 
 	@Override
-	public int modifyBuyer(BuyerVO buyer) {
-		return 0;
+	public ServiceResult modifyBuyer(BuyerVO buyer) {
+		ServiceResult result = ServiceResult.FAILED;
+		if (buyerDAO.selectBuyer(buyer.getBuyer_id())==null) {
+			throw new CommonException(buyer.getBuyer_id() + "에 해당하는 거래처가 없습니다.");
+		}
+		if (buyerDAO.updateBuyer(buyer)>0) {
+			result = ServiceResult.SUCCESS;
+		}
+		return result;
 	}
 
 }
