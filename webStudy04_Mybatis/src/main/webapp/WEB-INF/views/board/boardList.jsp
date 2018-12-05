@@ -1,11 +1,72 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+	integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+	crossorigin="anonymous">
 <link href="${pageContext.request.contextPath}/css/style.css" rel="stylesheet"/>
+    <script type="text/javascript"
+	src="${pageContext.request.contextPath}/js/jquery-3.3.1.min.js"></script>
+    <script src="http://malsup.github.com/jquery.form.js"></script> 
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+	integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+	crossorigin="anonymous"></script>
+<script
+	src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+	integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+	crossorigin="anonymous"></script>
+<c:url value="/board/boardView.do" var="boardView" />
+<script type="text/javascript">
+	$(function () {
+		var listBody = $("#listBody");		
+		var pagingNav = $("#pagingNav");
+		
+		var searchForm = $('[name="searchForm"]');
+		
+		var options = {
+			dataType : 'json',
+			success : showResponse
+		}
+		
+		searchForm.ajaxForm(options);
+
+		function showResponse(responseText, statusText, xhr, $form)  { 
+			var tags = "";
+			var boardList = responseText.dataList;
+			var pagingHTML = responseText.pagingHTML;
+			if (boardList.length) {
+				$.each(boardList, function (idx, board) {
+					tags += "<tr>";
+					tags += "<td>" + board.bo_no +"</td>";     
+					tags += "<td><a href='${boardView}?what=" + board.bo_no + "'>" + board.bo_title +"</a></td>";  
+					tags += "<td>" + board.bo_writer +"</td>"; 
+					tags += "<td>" + board.bo_date +"</td>";   
+					tags += "<td>" + board.bo_hit +"</td>";   
+					tags += "<td>" + board.bo_rcmd +"</td>";  
+					tags += "</tr>";
+				})
+			} else {
+				tags += "<tr><td colspan='6'>게시글이 없습니다.</td></tr>";
+			}
+			listBody.html(tags);
+			pagingNav.html(pagingHTML);
+			$("[name='page']").val("");
+		} 
+		
+	});
+
+	function ${pagingVO.funcName}(page) {
+		$("[name='searchForm']").find("[name='page']").val(page);
+		$("[name='searchForm']").submit();
+	}
+</script>
 </head>
 <body>
 	<div class="container managergroup">
@@ -20,13 +81,64 @@
 					<th>추천</th>
 				</tr>
 			</thead>
-			<tbody class="body">
-				<tr>
-					<td></td>
-				</tr>
+			<tbody id="listBody" class="body">
+				<c:set var="boardList" value="${pagingVO.dataList }" />
+				<c:choose>
+					<c:when test="${not empty boardList }">
+						<c:forEach items="${boardList }" var="board" >
+							<tr>
+								<td>${board.bo_no }</td>
+								<td><a href="${boardView }?what=${board.bo_no}">${board.bo_title }</a></td>
+								<td>${board.bo_writer }</td>
+								<td>${board.bo_date }</td>
+								<td>${board.bo_hit }</td>
+								<td>${board.bo_rcmd }</td>
+							</tr>
+						</c:forEach>
+					</c:when>
+					<c:otherwise>
+						<tr>
+							<td colspan="6">게시글이 없습니다.</td>
+						</tr>
+					</c:otherwise>
+				</c:choose>
 			</tbody>
 			<tfoot class="foot">
-				
+				<tr>
+					<td colspan="6">
+						<nav aria-label="Page navigation example" id="pagingNav">
+							${pagingVO.pagingHTML }
+						</nav>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="6">
+						<div class="d-flex justify-content-center">
+						<form name="searchForm">
+							<div class="form-group row">
+								<input type="hidden" name="page" />
+								<div class="col-xs-2 col-centered">
+									<select name="searchType" class="form-control">
+										<option value="all">전체</option>
+										<option value="title">제목</option>
+										<option value="writer">글쓴이</option>
+										<option value="content">내용</option>
+									</select>
+								</div>
+								<script type="text/javascript">
+									document.searchForm.searchType.value = "${empty pagingVO.searchType ? 'all':pagingVO.searchType}";
+								</script>	
+								<div class="col-xs-2 col-centered">
+									<input class="form-control" type="text" name="searchWord" value="${pagingVO.searchWord }" />
+								</div>
+								<div class="col-xs-2 col-centered">
+									<input class="form-control" type="submit" value="검색" />
+								</div>
+							</div>
+						</form>
+						</div>
+					</td>
+				</tr>
 			</tfoot>
 		</table>
 	</div>

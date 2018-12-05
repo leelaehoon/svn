@@ -21,6 +21,4 @@ public enum Mime {
 	public String dataMake(String result) {
 		return responseDataMaker.dataMake(result);
 	}
-	
-	
 }

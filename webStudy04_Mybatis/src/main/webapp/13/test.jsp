@@ -5,179 +5,53 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+	integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+	crossorigin="anonymous">
 <link href="${pageContext.request.contextPath}/css/style.css" rel="stylesheet"/>
+    <script type="text/javascript"
+	src="${pageContext.request.contextPath}/js/jquery-3.3.1.min.js"></script>
+    <script src="http://malsup.github.com/jquery.form.js"></script> 
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+	integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+	crossorigin="anonymous"></script>
+<script
+	src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+	integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+	crossorigin="anonymous"></script>
 </head>
 <body>
-     <div class="container managergroup" id="container" name="container" >
-            <h3>이메일 수신자 그룹관리 <span class="txt_small">(이메일 뉴스레터를 발송할 대상 수신자 목록을 선택하세요.)</span> </h3>
-            <hr>
-            <a class="btn" href="#" target="_blank">신규등록 <span class="btn_txt_small">▶</span></a>
-            <a class="btn" href="#" target="_blank">단일화 <span class="btn_txt_small">▶</span></a>
-            <a class="btn" href="#" target="_blank">분리 <span class="btn_txt_small">▶</span></a>
-            <a class="btn" href="#" target="_blank">다운로드 <span class="btn_txt_small">▶</span></a>
-            <a class="btn" href="#" target="_blank">삭제 <span class="btn_txt_small">▶</span></a>
-            <a class="btn" href="#" target="_blank">업로드 <span class="btn_txt_small">▶</span></a>
-
-            <div class="right">
-                <select class="select_btn">
-                    <option value="">10개씩 보기</option>    
-                </select>
-            </div>
-
-            <table class="bbsList" summary="이메일 수신자 그룹관리 (이메일 뉴스레터를 발송할 대상 수신자 목록을 선택하세요.)">
-                <caption>이메일 수신자 그룹관리 (이메일 뉴스레터를 발송할 대상 수신자 목록을 선택하세요.)</caption>           
-                <thead class="head">
-                    <tr>
-                        <th><a class="checkbox" href="" ></a></th> 
-                        <th>번호</th>
-                        <th>수신자 그룹명</th>   
-                        <th>이메일 수</th>
-                        <th>등록일</th>
-                        <th>횟수</th>
-                        <th>최근발송일</th>
-                        <th>반송건 수</th> 
-                        <th>수정</th> 
-                    </tr>    
-                </thead>
-                <tbody class="body">
-                    <tr>
-                        <td class=""><a class="checkbox_checked" href="javascript:;" >✓</a></td>
-                        <td class="">123</td>
-                        <td class="">사랑이 넘치는 한의원 홈페이지 구독 웹진을 보내 드립니다.</td>
-                        <td class="">563명</td>
-                        <td class="">2016-05-23</td>
-                        <td class=" txt_org">253</td>
-                        <td class="">2016-0526</td>                                                            
-                        <td class=" txt_org">35</td>
-                        <td class=""><a class="viewbtn" href="#" target="_blank"><span class="txt_org">보기</span></a></td>
-                    </tr>
-                    <tr>
-                        <td class=""><a class="checkbox" href="javascript:;" ></a></td>
-                        <td class="">123</td>
-                        <td class="">사랑이 넘치는 한의원 홈페이지 구독 웹진을 보내 드립니다.</td>
-                        <td class="">563명</td>
-                        <td class="">2016-05-23</td>
-                        <td class=" txt_org">253</td>
-                        <td class="">2016-0526</td>                                                            
-                        <td class=" txt_org">35</td>
-                        <td class=""><a class="viewbtn" href="#" target="_blank"><span class="txt_org">보기</span></a></td>
-                    </tr>
-                    <tr>
-                        <td class=""><a class="checkbox" href="javascript:;" ></a></td>
-                        <td class="">123</td>
-                        <td class="">사랑이 넘치는 한의원 홈페이지 구독 웹진을 보내 드립니다.</td>
-                        <td class="">563명</td>
-                        <td class="">2016-05-23</td>
-                        <td class=" txt_org">253</td>
-                        <td class="">2016-0526</td>                                                            
-                        <td class=" txt_org">35</td>
-                        <td class=""><a class="viewbtn" href="#" target="_blank"><span class="txt_org">보기</span></a></td>
-                    </tr>
-                    <tr>
-                        <td class=""><a class="checkbox" href="javascript:;" ></a></td>
-                        <td class="">123</td>
-                        <td class="">사랑이 넘치는 한의원 홈페이지 구독 웹진을 보내 드립니다.</td>
-                        <td class="">563명</td>
-                        <td class="">2016-05-23</td>
-                        <td class=" txt_org">253</td>
-                        <td class="">2016-0526</td>                                                            
-                        <td class=" txt_org">35</td>
-                        <td class=""><a class="viewbtn" href="#" target="_blank"><span class="txt_org">보기</span></a></td>
-                    </tr>
-                    <tr>
-                        <td class=""><a class="checkbox" href="javascript:;" ></a></td>
-                        <td class="">123</td>
-                        <td class="">사랑이 넘치는 한의원 홈페이지 구독 웹진을 보내 드립니다.</td>
-                        <td class="">563명</td>
-                        <td class="">2016-05-23</td>
-                        <td class=" txt_org">253</td>
-                        <td class="">2016-0526</td>                                                            
-                        <td class=" txt_org">35</td>
-                        <td class=""><a class="viewbtn" href="#" target="_blank"><span class="txt_org">보기</span></a></td>
-                    </tr>
-                    <tr>
-                        <td class=""><a class="checkbox" href="javascript:;" ></a></td>
-                        <td class="">123</td>
-                        <td class="">사랑이 넘치는 한의원 홈페이지 구독 웹진을 보내 드립니다.</td>
-                        <td class="">563명</td>
-                        <td class="">2016-05-23</td>
-                        <td class=" txt_org">253</td>
-                        <td class="">2016-0526</td>                                                            
-                        <td class=" txt_org">35</td>
-                        <td class=""><a class="viewbtn" href="#" target="_blank"><span class="txt_org">보기</span></a></td>
-                    </tr>
-                    <tr>
-                        <td class=""><a class="checkbox" href="javascript:;" ></a></td>
-                        <td class="">123</td>
-                        <td class="">사랑이 넘치는 한의원 홈페이지 구독 웹진을 보내 드립니다.</td>
-                        <td class="">563명</td>
-                        <td class="">2016-05-23</td>
-                        <td class=" txt_org">253</td>
-                        <td class="">2016-0526</td>                                                            
-                        <td class=" txt_org">35</td>
-                        <td class=""><a class="viewbtn" href="#" target="_blank"><span class="txt_org">보기</span></a></td>
-                    </tr>
-                    <tr>
-                        <td class=""><a class="checkbox" href="javascript:;" ></a></td>
-                        <td class="">123</td>
-                        <td class="">사랑이 넘치는 한의원 홈페이지 구독 웹진을 보내 드립니다.</td>
-                        <td class="">563명</td>
-                        <td class="">2016-05-23</td>
-                        <td class=" txt_org">253</td>
-                        <td class="">2016-0526</td>                                                            
-                        <td class=" txt_org">35</td>
-                        <td class=""><a class="viewbtn" href="#" target="_blank"><span class="txt_org">보기</span></a></td>
-                    </tr>
-                    <tr>
-                        <td class=""><a class="checkbox" href="javascript:;" ></a></td>
-                        <td class="">123</td>
-                        <td class="">사랑이 넘치는 한의원 홈페이지 구독 웹진을 보내 드립니다.</td>
-                        <td class="">563명</td>
-                        <td class="">2016-05-23</td>
-                        <td class=" txt_org">253</td>
-                        <td class="">2016-0526</td>                                                            
-                        <td class=" txt_org">35</td>
-                        <td class=""><a class="viewbtn" href="#" target="_blank"><span class="txt_org">보기</span></a></td>
-                    </tr>
-                    <tr>
-                        <td class=""><a class="checkbox" href="javascript:;" ></a></td>
-                        <td class="">123</td>
-                        <td class="">사랑이 넘치는 한의원 홈페이지 구독 웹진을 보내 드립니다.</td>
-                        <td class="">563명</td>
-                        <td class="">2016-05-23</td>
-                        <td class=" txt_org">253</td>
-                        <td class="">2016-0526</td>                                                            
-                        <td class=" txt_org">35</td>
-                        <td class=""><a class="viewbtn" href="#" target="_blank"><span class="txt_org">보기</span></a></td>
-                    </tr>
-                </tbody>
-                <tfoot class="foot">
-                    <tr>
-                        <td colspan="9">
-                            <span class="arrow radius-right">≪</span>
-                            <span class="arrow radius-left">＜</span>
-                            
-                            <a href="javascript:;" class="num_box txt_point">1</a>
-                            <a href="javascript:;" class="num_box ">2</a>
-                            <a href="javascript:;" class="num_box ">3</a>
-                            <a href="javascript:;" class="num_box ">4</a>
-                            <a href="javascript:;" class="num_box ">5</a>
-                            <a href="javascript:;" class="num_box ">6</a>
-                            <a href="javascript:;" class="num_box ">7</a>
-                            <a href="javascript:;" class="num_box ">8</a>
-                            <a href="javascript:;" class="num_box ">9</a>
-                            <a href="javascript:;" class="num_box ">10</a>
-
-                            <span class="arrow radius-right">＞</span>
-                            <span class="arrow radius-left">≫</span>
-                        </td>
-                    </tr>    
-                </tfoot>
-            </table>
-            <div class="btn_wrap">
-                <a class="btn_org" href="javascript:;"><span class="txt_white">수신자 그룹 등록</span></a>
-            </div>
-        </div>
-       
+	<div class="container d-flex justify-content-center" style="background-color: blue">
+			<div>
+				<table class="table">
+					<tr>
+						<td>table</td>
+						<td>table</td>
+						<td>table</td>
+						<td>table</td>
+						<td>table</td>
+						<td>table</td>
+					</tr>
+					<tr>
+						<td>table</td>
+						<td>table</td>
+						<td>table</td>
+						<td>table</td>
+						<td>table</td>
+						<td>table</td>
+					</tr>
+					<tr>
+						<td>table</td>
+						<td>table</td>
+						<td>table</td>
+						<td>table</td>
+						<td>table</td>
+						<td>table</td>
+					</tr>
+				</table>
+			</div>
+	</div>
 </body>
 </html>

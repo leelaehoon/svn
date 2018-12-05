@@ -45,15 +45,15 @@ public class FrontController extends HttpServlet {
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String uri = req.getRequestURI();
 		int cpLength = req.getContextPath().length();
-		uri = uri.substring(cpLength).split(";")[0]; // /member/memberList.do
+		uri = uri.substring(cpLength).split(";")[0]; // /board/boardList.do
 
-		ICommandHandler handler = handlerMap.get(uri);
+		ICommandHandler handler = handlerMap.get(uri); // BoardListController;
 		
 		if (handler == null) {
 			resp.sendError(HttpServletResponse.SC_NOT_FOUND, "해당 서비스는 제공하지 않습니다.");
 			return;
 		}
-		String view = handler.process(req, resp);
+		String view = handler.process(req, resp); // "board/boardList";
 		String prefix = "/WEB-INF/views/";
 		String suffix = ".jsp";
 		if (view!=null) {
@@ -62,7 +62,7 @@ public class FrontController extends HttpServlet {
 				view = view.substring("redirect:".length());
 				resp.sendRedirect(req.getContextPath() + view);
 			} else {
-				RequestDispatcher rd = req.getRequestDispatcher(prefix + view + suffix);
+				RequestDispatcher rd = req.getRequestDispatcher(prefix + view + suffix); ///WEB-INF/views/board/boardList.jsp
 				rd.forward(req, resp);
 			}
 		} else {

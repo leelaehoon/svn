@@ -41,7 +41,7 @@
 		SELECT B.*
 		FROM (
 			SELECT ROWNUM RNUM, A.*
-		FROM (
+			FROM (
 			<include refid="kr.or.ddit.member.dao.IMemberDAO.selectMemberFrag" />
 			<include refid="kr.or.ddit.member.dao.IMemberDAO.searchFrag"/>
 			ORDER BY ROWID DESC ) A ) B

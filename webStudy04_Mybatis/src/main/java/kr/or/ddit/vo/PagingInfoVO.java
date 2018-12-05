@@ -25,10 +25,13 @@ public class PagingInfoVO<T> {
 	private long totalRecord;
 	private int screenSize = 10;
 	private int blockSize = 5;
+	
 	private long currentPage;
+
 	private long totalPage;
 	private long startPage;
 	private long endPage;
+	
 	private long startRow;
 	private long endRow;
 	private List<T> dataList;

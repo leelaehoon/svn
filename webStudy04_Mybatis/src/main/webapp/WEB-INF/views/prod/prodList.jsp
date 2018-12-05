@@ -13,6 +13,7 @@
 	crossorigin="anonymous">
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/js/jquery-3.3.1.min.js"></script>
+    <script src="http://malsup.github.com/jquery.form.js"></script> 
 <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
 	integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
@@ -56,43 +57,39 @@
 			location.href = "${prodView}?what=" + prod_id;
 		});
 		
-		$("[name='searchForm']").on("submit", function (event) {
-			event.preventDefault();
-			var data = $(this).serialize(); // queryString 생성
-			$.ajax({
-				data : data,
-				dataType : "json", // Accept/Content-type
-				success : function(resp) {
-					var tags = "";
-					var pattern = "<td>%T</td>"
-					var prodList = resp.dataList;
-					var pagingHTML = resp.pagingHTML;
-					if (prodList.length) {
-						$.each(prodList, function (idx, prod) {
-							tags += "<tr>";
-							tags += pattern.replace("%T", prod.prod_id);
-							tags += pattern.replace("%T", prod.prod_name);
-							tags += pattern.replace("%T", prod.lprod_nm);
-							tags += pattern.replace("%T", prod.buyer_name);
-							tags += pattern.replace("%T", prod.prod_price);
-							tags += pattern.replace("%T", prod.prod_outline);
-							tags += pattern.replace("%T", prod.prod_mileage);
-							tags += "</tr>";
-						})
-					} else {
-						tags += "<tr><td colspan='7'>상품목록이 없습니다.</td></tr>";
-					}
-					listBody.html(tags);
-					pagingNav.html(pagingHTML);
-					$("[name='page']").val("");
-				},
-				error : function(resp) {
-
-				}
-			});
-			
-			return false;
-		});
+		var searchForm = $('[name="searchForm"]');
+		
+		var options = {
+			dataType : 'json',
+			success : showResponse
+		}
+		
+		searchForm.ajaxForm(options);
+		
+		function showResponse(responseText, statusText, xhr, $form)  { 
+			var tags = "";
+			var pattern = "<td>%T</td>"
+			var prodList = responseText.dataList;
+			var pagingHTML = responseText.pagingHTML;
+			if (prodList.length) {
+				$.each(prodList, function (idx, prod) {
+					tags += "<tr>";
+					tags += pattern.replace("%T", prod.prod_id);
+					tags += pattern.replace("%T", prod.prod_name);
+					tags += pattern.replace("%T", prod.lprod_nm);
+					tags += pattern.replace("%T", prod.buyer_name);
+					tags += pattern.replace("%T", prod.prod_price);
+					tags += pattern.replace("%T", prod.prod_outline);
+					tags += pattern.replace("%T", prod.prod_mileage);
+					tags += "</tr>";
+				})
+			} else {
+				tags += "<tr><td colspan='7'>상품목록이 없습니다.</td></tr>";
+			}
+			listBody.html(tags);
+			pagingNav.html(pagingHTML);
+			$("[name='page']").val("");
+		} 
 	});
 </script>
 <style type="text/css">
