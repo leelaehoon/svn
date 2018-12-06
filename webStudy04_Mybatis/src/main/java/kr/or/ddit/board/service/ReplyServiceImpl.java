@@ -2,6 +2,7 @@ package kr.or.ddit.board.service;
 
 import java.util.List;
 
+import kr.or.ddit.BoardException;
 import kr.or.ddit.ServiceResult;
 import kr.or.ddit.board.dao.IReplyDAO;
 import kr.or.ddit.board.dao.ReplyDAOImpl;
@@ -13,7 +14,13 @@ public class ReplyServiceImpl implements IReplyService {
 
 	@Override
 	public ServiceResult createReply(ReplyVO reply) {
-		return null;
+		ServiceResult result = ServiceResult.FAILED;
+		
+		if (replyDAO.insertReply(reply) > 0) {
+			result = ServiceResult.SUCCESS;
+		}
+		
+		return result;
 	}
 
 	@Override
@@ -33,7 +40,43 @@ public class ReplyServiceImpl implements IReplyService {
 
 	@Override
 	public ServiceResult removeReply(ReplyVO reply) {
-		return null;
+		ServiceResult result = ServiceResult.FAILED;
+		ReplyVO check = replyDAO.selectReply(reply.getRep_no());
+		if (check == null) {
+			throw new BoardException(reply.getRep_no() + "번에 해당하는 댓글이 없습니다.");
+		} else {
+			if (!check.getRep_pass().equals(reply.getRep_pass())) {
+				result = ServiceResult.INVALIDPASSWORD;
+			} else {
+				if (replyDAO.deleteReply(reply.getRep_no()) > 0) {
+					result = ServiceResult.SUCCESS;
+				}
+			}
+		}
+		return result;
 	}
-
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

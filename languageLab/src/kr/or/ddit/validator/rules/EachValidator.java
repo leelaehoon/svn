@@ -26,7 +26,7 @@ public abstract class EachValidator<T extends Annotation> {
 		if (!isSupported(targetType)) {
 			throw new NotSupportedFieldTypeAtRule(targetType, rule);
 		}
-		valid = validateTarget(targetType, rule, message);
+		valid = validateTarget(target, rule, message);
 		return valid;
 	}
 	/**

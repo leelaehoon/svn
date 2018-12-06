@@ -10,7 +10,6 @@
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
 	integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
 	crossorigin="anonymous">
-<link href="${pageContext.request.contextPath}/css/style.css" rel="stylesheet"/>
     <script type="text/javascript"
 	src="${pageContext.request.contextPath}/js/jquery-3.3.1.min.js"></script>
     <script src="http://malsup.github.com/jquery.form.js"></script> 
@@ -22,44 +21,11 @@
 	src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
 	integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
 	crossorigin="anonymous"></script>
+<script type="text/javascript" src="<c:url value='/js/replyProcess.js' />" ></script>
 <script type="text/javascript">
-	function paging(page) {
-		$.ajax({
-			url : "${pageContext.request.contextPath}/reply/replyList.do",
-			data : {
-				bo_no:${board.bo_no},
-				page:page
-			},
-			dataType : "json",
-			success : function(resp) {
-				var html = "";
-				if (resp.dataList) {
-					$.each(resp.dataList, function (idx, reply) {
-						html += "<tr>";
-						html += "<td>" + reply.rep_no + "</td>";
-						html += "<td>" + reply.rep_writer + "</td>";
-						html += "<td>" + reply.rep_content + "</td>";
-						html += "<td>" + reply.rep_ip + "</td>";
-						html += "<td>" + reply.rep_date + "</td>";
-						html += "</tr>";
-					});
-				} else {
-					html += "<tr><td colspan='5'>댓글이 없습니다.</td></tr>";
-				}
-				pagingNav.html(resp.pagingHTML);
-				listBody.html(html);
-			},
-			error : function(resp) {
-				console.log(resp.status);
-			}
-		});
+	$.getContextPath = function () {
+		return "${pageContext.request.contextPath}";
 	}
-	
-	$(function () {
-		pagingNav = $("#pagingNav");
-		listBody = $("#listBody");
-		paging(1);
-	});
 </script>
 </head>
 <body>
@@ -86,6 +52,23 @@
 					</tr>
 				</tbody>
 			</table>
+			<div>
+				<form name="tempForm" onsubmit="return false;">
+					작성자: <input type="text" name="writer" />
+					패스워드: <input type="password" name="pass" />
+					내용: <textarea name="content" cols="100" rows="3"></textarea>
+					<input id="replyInsertBtn" class='btn btn-primary' type="button" value="등록" />
+				</form>
+				
+				<form action='<c:url value="/reply/replyInsert.do" />' name="replyForm" method="post" >
+					<input type="hidden" name="rep_no" />
+					<input type="hidden" name="bo_no" value="${param.what }" />
+					<input type="hidden" name="rep_writer" />
+					<input type="hidden" name="rep_ip" value="${pageContext.request.remoteAddr }" />
+					<input type="hidden" name="rep_pass" />
+					<input type="hidden" name="rep_content" />
+				</form>
+			</div>
 		<table>
 			<thead>
 				<tr>
@@ -97,30 +80,11 @@
 				</tr>
 			</thead>
 			<tbody id="listBody">
-				<c:choose>
-					<c:when test="${not empty board.replyList }">
-						<c:forEach items="${board.replyList }" var="reply">
-							<tr>
-								<td>${reply.rep_no }</td>
-								<td>${reply.rep_writer }</td>
-								<td>${reply.rep_content }</td>
-								<td>${reply.rep_ip }</td>
-								<td>${reply.rep_date }</td>
-							</tr>
-						</c:forEach>
-					</c:when>
-					<c:otherwise>
-						<tr>
-							<td colspan="5">댓글이 없습니다.</td>
-						</tr>
-					</c:otherwise>
-				</c:choose>
 			</tbody>
 			<tfoot>
 				<tr>
 					<td colspan="5">
 						<nav aria-label="Page navigation example" id="pagingNav">
-							${pagingVO.pagingHTML }
 						</nav>
 					</td>
 				</tr>
@@ -128,5 +92,36 @@
 		</table>
 			</div>
 		</div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="repModModal" tabindex="-1" role="dialog"
+		aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<input type="hidden" id="bo_no" value="${param.what }" />
+					<input type="hidden" id="rep_no" />
+					비밀번호 : <input type="password" id="rep_pass" />
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" id="modalBtn">수정</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+				</div>
+			</div>
+		</div>
+	</div>
+<script type="text/javascript">
+	function paging(page) {
+		pagingReply(page, ${board.bo_no});
+	}
+	paging(1);
+</script>
 </body>
 </html>

@@ -15,7 +15,9 @@ public class NotNullValidator extends EachValidator<NotNull> {
 
 	@Override
 	protected boolean validateTarget(Object target, NotNull rule, StringBuffer message) {
-		return target!=null;
+		boolean valid = target!=null;
+		if (!valid) message.append(rule.message());
+		return valid;
 	}
 
 	@Override

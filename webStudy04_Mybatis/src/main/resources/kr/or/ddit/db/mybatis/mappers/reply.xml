@@ -18,4 +18,28 @@
 				ORDER BY REP_NO DESC ) A ) B
 		WHERE RNUM BETWEEN #{startRow} AND #{endRow}
 	</select>
+	
+	<select id="selectReply" parameterType="long" resultType="replyVO">
+		SELECT REP_NO, BO_NO, REP_WRITER, REP_IP, REP_PASS
+		FROM REPLY
+		WHERE REP_NO = #{rep_no}
+	</select>
+	
+	<insert id="insertReply" parameterType="replyVO">
+		<selectKey order="BEFORE" keyProperty="rep_no" resultType="long">
+			SELECT REPLY_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO REPLY (
+		    REP_NO,    BO_NO,    REP_WRITER,    REP_IP,
+		    REP_PASS,    REP_CONTENT,    REP_DATE
+		) VALUES (
+			#{rep_no},    #{bo_no},    #{rep_writer},    #{rep_ip},
+		    #{rep_pass},    #{rep_content},    sysdate
+		)
+	</insert>
+	
+	<delete id="deleteReply" parameterType="long">
+		DELETE FROM REPLY
+		WHERE REP_NO = #{rep_no}
+	</delete>
 </mapper>
