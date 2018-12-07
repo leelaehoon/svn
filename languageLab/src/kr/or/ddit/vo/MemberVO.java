@@ -9,32 +9,33 @@ import kr.or.ddit.validator.rules.constraints.NotBlank;
 import kr.or.ddit.validator.rules.constraints.NotNull;
 
 public class MemberVO implements Serializable {
-	@NotNull(groups={UpdateGroup.class})
+	@NotBlank
 	private String mem_id;
-	
-	@Length(min=3, max=6)
+	@Length(min=4, max=12)
 	@NotBlank(message="비밀번호는 필수데이터")
 	private String mem_pass;
+	@NotBlank(groups={InsertGroup.class})
 	private String mem_name;
-	
 	@NotBlank(groups={InsertGroup.class})
 	private String mem_regno1;
+	@NotBlank(groups={InsertGroup.class})
 	private String mem_regno2;
 	private String mem_bir;
-	
-	@NotBlank(groups={UpdateGroup.class})
+	@NotBlank
 	private String mem_zip;
+	@NotBlank
 	private String mem_add1;
+	@NotBlank
 	private String mem_add2;
 	private String mem_hometel;
 	private String mem_comtel;
+	@NotBlank
 	private String mem_hp;
 	private String mem_mail;
 	private String mem_job;
 	private String mem_like;
 	private String mem_memorial;
 	private String mem_memorialday;
-//	@NotBlank
 	private Long mem_mileage;
 	private String mem_delete;
 	private String mem_auth;

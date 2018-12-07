@@ -2,6 +2,8 @@ package kr.or.ddit.validator.rules;
 
 import java.lang.annotation.Annotation;
 
+import kr.or.ddit.validator.DefaultGroup;
+
 /**
  * 각 검증 어노테이션을 필드에 사용했을 때 실제 검증을 수행할 Validator들의 상위
  * 
@@ -54,9 +56,11 @@ public abstract class EachValidator<T extends Annotation> {
 	 */
 	protected boolean groupMatching(Class[] groups, Class[] groupsAtRule) {
 		boolean match = false;
+		if (groups == null || groups.length == 0) groups = new Class[]{DefaultGroup.class};
+		if (groupsAtRule == null || groupsAtRule.length == 0) groups = new Class[]{DefaultGroup.class};
 		for (Class group : groups) {
 			for (Class groupAtRule : groupsAtRule) {
-				match = group.isAssignableFrom(groupAtRule);
+				match = groupAtRule.isAssignableFrom(group);
 				if (match) break;
 			}
 			if (match) break;

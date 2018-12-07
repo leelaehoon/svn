@@ -8,8 +8,10 @@ import java.util.List;
 import java.util.Map;
 
 import kr.or.ddit.validator.rules.EachValidator;
+import kr.or.ddit.validator.rules.LengthValidator;
 import kr.or.ddit.validator.rules.NotBlankValidator;
 import kr.or.ddit.validator.rules.NotNullValidator;
+import kr.or.ddit.validator.rules.constraints.Length;
 import kr.or.ddit.validator.rules.constraints.NotBlank;
 import kr.or.ddit.validator.rules.constraints.NotNull;
 
@@ -19,6 +21,7 @@ public class GeneralValidator {
 		validators = new HashMap<>();
 		validators.put(NotNull.class, new NotNullValidator());
 		validators.put(NotBlank.class, new NotBlankValidator());
+		validators.put(Length.class, new LengthValidator());
 	}
 	
 	public EachValidator addValidator(Class<? extends Annotation> ruleType, Class<? extends EachValidator> validatorType) {
@@ -42,9 +45,8 @@ public class GeneralValidator {
 		Field[] fields = targetType.getDeclaredFields();
 		if (fields!=null) {
 			for (Field field : fields) {
-				System.out.println("검사" +field.getName());
 				try {
-					valid = valid && validateField(target, field, errors, groups);
+					valid = validateField(target, field, errors, groups) && valid;
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					throw new RuntimeException(e);
 				}
@@ -64,18 +66,15 @@ public class GeneralValidator {
 	private boolean validateField(Object commandObject, Field field, Map<String, List<CharSequence>> errors, Class...groups) throws IllegalArgumentException, IllegalAccessException {
 		boolean valid = true;
 		Annotation[] annotations = field.getAnnotations();
-		System.out.println(field.getName());
-		System.out.println("어노테이션 갯수" +annotations.length);
 		if (annotations != null && annotations.length > 0) {
 			for (Annotation annotation : annotations) {
 				EachValidator validator = validators.get(annotation.annotationType());
 				if (validator == null) continue;
-				System.out.println("몇번");
 				StringBuffer message = new StringBuffer();
 				field.setAccessible(true); // modifier를 강제로 public으로 변경
 				Object target = field.get(commandObject);
 				if (!validator.groupMatching(groups, annotation)) continue;
-				valid = valid && validator.validate(target, field.getType(), annotation, message);
+				valid &= validator.validate(target, field.getType(), annotation, message);
 				if (!valid) {
 					List<CharSequence> messageList = errors.get(field.getName());
 					if (messageList == null ) {

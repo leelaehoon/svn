@@ -27,6 +27,11 @@
 		return "${pageContext.request.contextPath}";
 	}
 </script>
+<style type="text/css">
+	.bo_content {
+		min-height: 500px;
+	}
+</style>
 </head>
 <body>
 		<div class="container d-flex justify-content-center">
@@ -45,11 +50,23 @@
 				<tbody>
 					<tr>
 						<td colspan="6">
-							<div>
+							<div class="bo_content">
 								${board.bo_content }
 							</div>
 						</td>
 					</tr>
+					<c:if test="${not empty board.pdsList }">
+						<c:forEach items="${board.pdsList }" var="pds" >
+							<tr>
+								<c:url value="/board/download.do" var="downloadURL">
+									<c:param name="what" value="${pds.pds_no }" />
+								</c:url>
+								<td colspan="6">
+									첨부파일: <a href="${downloadURL }">${pds.pds_filename }</a>
+								</td>
+							</tr>
+						</c:forEach>
+					</c:if>
 				</tbody>
 			</table>
 			<div>

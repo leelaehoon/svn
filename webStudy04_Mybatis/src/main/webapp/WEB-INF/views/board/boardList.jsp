@@ -114,28 +114,31 @@
 				<tr>
 					<td colspan="6">
 						<div class="d-flex justify-content-center">
-						<form name="searchForm">
-							<div class="form-group row">
-								<input type="hidden" name="page" />
-								<div class="col-xs-2 col-centered">
-									<select name="searchType" class="form-control">
-										<option value="all">전체</option>
-										<option value="title">제목</option>
-										<option value="writer">글쓴이</option>
-										<option value="content">내용</option>
-									</select>
+							<form name="searchForm">
+								<div class="form-group row">
+									<input type="hidden" name="page" />
+									<div class="col-xs-2 col-centered">
+										<select name="searchType" class="form-control">
+											<option value="all">전체</option>
+											<option value="title">제목</option>
+											<option value="writer">글쓴이</option>
+											<option value="content">내용</option>
+										</select>
+									</div>
+									<script type="text/javascript">
+										document.searchForm.searchType.value = "${empty pagingVO.searchType ? 'all':pagingVO.searchType}";
+									</script>	
+									<div class="col-xs-2 col-centered">
+										<input class="form-control" type="text" name="searchWord" value="${pagingVO.searchWord }" />
+									</div>
+									<div class="col-xs-2 col-centered">
+										<input class="form-control" type="submit" value="검색" />
+									</div>
 								</div>
-								<script type="text/javascript">
-									document.searchForm.searchType.value = "${empty pagingVO.searchType ? 'all':pagingVO.searchType}";
-								</script>	
-								<div class="col-xs-2 col-centered">
-									<input class="form-control" type="text" name="searchWord" value="${pagingVO.searchWord }" />
-								</div>
-								<div class="col-xs-2 col-centered">
-									<input class="form-control" type="submit" value="검색" />
-								</div>
+							</form>
+							<div class="col-xs-2 col-centered">
+								<input class="form-control" type="button" value="글쓰기" onclick="location.href='<c:url value='/board/boardInsert.do' />'" />
 							</div>
-						</form>
 						</div>
 					</td>
 				</tr>

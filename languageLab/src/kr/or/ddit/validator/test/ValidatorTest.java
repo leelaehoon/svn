@@ -17,7 +17,7 @@ public class ValidatorTest {
 		GeneralValidator validator = new GeneralValidator();
 		validator.addValidator(Length.class, LengthValidator.class);
 		Map<String, List<CharSequence>> errors = new LinkedHashMap<>();
-		boolean valid = validator.validate(member, errors, InsertGroup.class);
+		boolean valid = validator.validate(member, errors);
 		System.out.println(valid);
 		System.out.println(errors);
 	}

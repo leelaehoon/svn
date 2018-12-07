@@ -22,6 +22,4 @@ public class NotBlankValidator extends EachValidator<NotBlank> {
 	public boolean groupMatching(Class[] groups, NotBlank rule) {
 		return groupMatching(groups, rule.groups());
 	}
-
-
 }
