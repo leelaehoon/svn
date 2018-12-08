@@ -41,12 +41,12 @@
 	                     ORDER BY BO_NO DESC) A ) B
 	     WHERE RNUM BETWEEN #{startRow} AND #{endRow}
 	</select>
-	<resultMap type="boardVO" id="boardMap" autoMapping="true" >
+	<resultMap type="boardVO" id="boardPdsMap" autoMapping="true" >
 		<id property="bo_no" column="BO_NO" />
 		<collection property="pdsList" autoMapping="true" javaType="java.util.List" ofType="pdsVO" />
 	</resultMap>
 	
-	<select id="selectBoard" parameterType="long" resultMap="boardMap">
+	<select id="selectBoard" parameterType="long" resultMap="boardPdsMap">
 		SELECT BOARD.*, PDS.* 
 		FROM BOARD LEFT OUTER JOIN PDS ON (BOARD.BO_NO = PDS.BO_NO)
 		WHERE BOARD.BO_NO = #{bo_no}

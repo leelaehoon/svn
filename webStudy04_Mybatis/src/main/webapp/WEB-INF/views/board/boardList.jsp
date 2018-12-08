@@ -45,7 +45,7 @@
 				$.each(boardList, function (idx, board) {
 					tags += "<tr>";
 					tags += "<td>" + board.bo_no +"</td>";     
-					tags += "<td><a href='${boardView}?what=" + board.bo_no + "'>" + board.bo_title +"</a></td>";  
+					tags += "<td><a href='${boardView}?what=" + board.bo_no + "'>" + board.bo_title +"</a><td>";
 					tags += "<td>" + board.bo_writer +"</td>"; 
 					tags += "<td>" + board.bo_date +"</td>";   
 					tags += "<td>" + board.bo_hit +"</td>";   
