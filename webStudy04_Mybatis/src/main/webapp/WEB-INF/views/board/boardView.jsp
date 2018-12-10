@@ -26,6 +26,30 @@
 	$.getContextPath = function () {
 		return "${pageContext.request.contextPath}";
 	}
+	$(function () {
+		var viewTable = $("#viewTable");
+		var deleteForm = $("#deleteForm");
+		viewTable.on("click", "#deleteBtn" , function () {
+			tr = $(this).closest("tr");
+			trHtml = tr.html();
+			var check = confirm("정말 삭제하시겠습니까?");
+			if (check) {
+				var tdHtml = "<td cols='6'><input type='password' id='bo_pass' ><input id='deleteConfirm' type='button' value='확인' /><input id='deleteCancel' type='button' value='취소'/></td>"
+				tr.html(tdHtml);				
+			}
+		})
+		
+		viewTable.on("click", "#deleteCancel", function () {
+			tr.html(trHtml);
+		})
+		
+		viewTable.on("click", "#deleteConfirm", function () {
+			var bo_pass = $("#bo_pass").val();
+			deleteForm.find("[name='bo_pass']").val(bo_pass);
+			deleteForm.submit();
+		})
+		
+	})
 </script>
 <style type="text/css">
 	.bo_content {
@@ -34,9 +58,13 @@
 </style>
 </head>
 <body>
+	<form id="deleteForm" action="<c:url value='/board/boardDelete.do' />" method="post">
+		<input type="hidden" value="${board.bo_no }" name="bo_no" />
+		<input type="hidden" name="bo_pass" />
+	</form>
 		<div class="container d-flex justify-content-center">
 			<div class="d-flex align-items-start flex-column bd-highlight mb-3">
-			<table class="table">
+			<table class="table" id="viewTable">
 				<thead>
 					<tr>
 						<th>글번호:${board.bo_no }</th>
@@ -68,6 +96,17 @@
 						</c:forEach>
 					</c:if>
 				</tbody>
+				<tfoot>
+					<tr>
+						<td colspan="6">
+							<c:url value='/board/boardUpdate.do' var="updateURL">
+								<c:param name="what" value="${board.bo_no }" />
+							</c:url>
+							<input type="button" value="수정" onclick="location.href='${updateURL}'" />
+							<input type="button" value="삭제" id="deleteBtn" />
+						</td>
+					</tr>
+				</tfoot>
 			</table>
 			<div>
 				<form name="tempForm" onsubmit="return false;">

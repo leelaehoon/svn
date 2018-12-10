@@ -23,13 +23,31 @@
 	integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
 	crossorigin="anonymous"></script>
 <script type="text/javascript" src="${cPath }/js/ckeditor/ckeditor.js"></script>
+<script type="text/javascript">
+	$(function () {
+		var boardForm = $("[name='boardForm']");
+		$("#formTable").on("click", ".fileDelBtn", function () {
+			var pds_no = $(this).closest("span").attr("id");
+			$("<input type='hidden' value='" + pds_no + "' name='delFiles' /> ").appendTo("#boardForm");
+			$(this).closest("li").remove();
+		})
+	})
+</script>
 </head>
 <body>
 <div class="container d-flex justify-content-center">
-<form action="<c:url value='/board/boardInsert.do' />" method="post" enctype="multipart/form-data">
+<c:choose>
+	<c:when test="${not empty board.bo_no }">
+		<c:url value="/board/boardUpdate.do" var="boardURL" />
+	</c:when>
+	<c:otherwise>
+		<c:url value="/board/boardInsert.do" var="boardURL" />
+	</c:otherwise>
+</c:choose>
+<form id="boardForm" action="${boardURL }" method="post" enctype="multipart/form-data">
 	<input type="hidden" name="bo_no" value="${board.bo_no }" />
 	<input type="hidden" name="bo_ip" value="${pageContext.request.remoteAddr }" />
-	<table class="table">
+	<table class="table" id="formTable">
 		<tr>
 			<th>작성자</th>
 			<td><div class="input-group">
@@ -42,7 +60,7 @@
 			<th>비밀번호</th>
 			<td><div class="input-group">
 					<input class="form-control" type="password" name="bo_pass"
-						value="${board.bo_pass}" /><span class="input-group-text"
+						value="" /><span class="input-group-text"
 						class="error">${errors["bo_pass"]}</span>
 				</div></td>
 		</tr>
@@ -73,6 +91,20 @@
 		<tr>
 			<th>첨부파일</th>
 			<td>
+				<c:if test="${not empty board.pdsList }">
+					<ul>
+						<c:forEach items="${board.pdsList }" var="pds" >
+							<c:if test="${not empty pds.pds_filename }">
+								<li>
+									<span id="${pds.pds_no }">
+										${pds.pds_filename }
+										<input type="button" value="삭제" class="fileDelBtn" />
+									</span>
+								</li>
+							</c:if>
+						</c:forEach>
+					</ul>
+				</c:if>
 				<input class="form-control" type="file" name="bo_file" />
 				<input class="form-control" type="file" name="bo_file" />
 				<input class="form-control" type="file" name="bo_file" />
@@ -90,7 +122,21 @@
 	</table>
 </form>
 <script type="text/javascript">
-	CKEDITOR.replace( 'bo_content' );
+	CKEDITOR.replace('bo_content', {
+
+	      extraAllowedContent: 'h3{clear};h2{line-height};h2 h3{margin-left,margin-top}',
+
+	      // Adding drag and drop image upload.
+	      extraPlugins: 'uploadimage',
+	      uploadUrl: '${pageContext.request.contextPath}/board/uploadImage.do',
+
+	      // Configure your file manager integration. This example uses CKFinder 3 for PHP.
+	      filebrowserImageUploadUrl: '${pageContext.request.contextPath}/board/uploadImage.do',
+
+	      height: 560,
+
+	      removeDialogTabs: 'image:advanced;link:advanced'
+	  });		
 </script>
 </div>
 </body>

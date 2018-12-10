@@ -14,7 +14,7 @@
 					html += "<td>" + reply.rep_content + "</td>";
 					html += "<td>" + reply.rep_ip + "</td>";
 					html += "<td>" + reply.rep_date;
-					html += " <input class='replyModBtn' data-toggle='modal' type='button' type='button' value='수정'>";
+					html += " <input class='replyModBtn' data-toggle='modal' type='button' value='수정'>";
 					html += " <input class='replyDelBtn' type='button' value='삭제'></td>";
 					html += "</tr>";
 				});
@@ -109,6 +109,4 @@
 		listBody.on("click", ".cancel", function () {
 			$(this).parent().html(originTag);
 		})
-		
-		
 	});

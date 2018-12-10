@@ -43,7 +43,14 @@ public interface IPdsDAO {
 	 * @param pds_no
 	 * @return row count
 	 */
-	public int deletePds(long pds_no);
+	public int deletePds(long pds_no, SqlSession session);
+	/**
+	 * 여러개의 첨부파일을 한번에 삭제
+	 * @param board
+	 * @param session
+	 * @return
+	 */
+	public int deletePdses(BoardVO board, SqlSession session);
 }
 
 

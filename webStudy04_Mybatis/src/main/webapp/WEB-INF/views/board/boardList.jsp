@@ -27,39 +27,64 @@
 	$(function () {
 		var listBody = $("#listBody");		
 		var pagingNav = $("#pagingNav");
-		
 		var searchForm = $('[name="searchForm"]');
 		
-		var options = {
-			dataType : 'json',
-			success : showResponse
-		}
-		
-		searchForm.ajaxForm(options);
-
-		function showResponse(responseText, statusText, xhr, $form)  { 
-			var tags = "";
-			var boardList = responseText.dataList;
-			var pagingHTML = responseText.pagingHTML;
-			if (boardList.length) {
-				$.each(boardList, function (idx, board) {
-					tags += "<tr>";
-					tags += "<td>" + board.bo_no +"</td>";     
-					tags += "<td><a href='${boardView}?what=" + board.bo_no + "'>" + board.bo_title +"</a><td>";
-					tags += "<td>" + board.bo_writer +"</td>"; 
-					tags += "<td>" + board.bo_date +"</td>";   
-					tags += "<td>" + board.bo_hit +"</td>";   
-					tags += "<td>" + board.bo_rcmd +"</td>";  
-					tags += "</tr>";
-				})
+		$(window).on("popstate", function (event) {
+			if (event.originalEvent.state) {
+				var pagingVO = event.originalEvent.state;
+				var tags = "";
+				var boardList = pagingVO.dataList;
+				var pagingHTML = pagingVO.pagingHTML;
+				if (boardList.length) {
+					$.each(boardList, function (idx, board) {
+						tags += "<tr>";
+						tags += "<td>" + board.bo_no +"</td>";     
+						tags += "<td><a href='${boardView}?what=" + board.bo_no + "'>" + board.bo_title +"</a><td>";
+						tags += "<td>" + board.bo_writer +"</td>"; 
+						tags += "<td>" + board.bo_date +"</td>";   
+						tags += "<td>" + board.bo_hit +"</td>";   
+						tags += "<td>" + board.bo_rcmd +"</td>";  
+						tags += "</tr>";
+					})
+				} else {
+					tags += "<tr><td colspan='6'>게시글이 없습니다.</td></tr>";
+				}
+				listBody.html(tags);
+				pagingNav.html(pagingHTML);
 			} else {
-				tags += "<tr><td colspan='6'>게시글이 없습니다.</td></tr>";
+				location.reload();
 			}
-			listBody.html(tags);
-			pagingNav.html(pagingHTML);
-			$("[name='page']").val("");
-		} 
+		});
 		
+		searchForm.ajaxForm({
+			dataType : 'json',
+			success : function (resp) {
+				var tags = "";
+				var boardList = resp.dataList;
+				var pagingHTML = resp.pagingHTML;
+				if (boardList) {
+					$.each(boardList, function (idx, board) {
+						tags += "<tr>";
+						tags += "<td>" + board.bo_no +"</td>";     
+						tags += "<td><a href='${boardView}?what=" + board.bo_no + "'>" + board.bo_title +"</a><td>";
+						tags += "<td>" + board.bo_writer +"</td>"; 
+						tags += "<td>" + board.bo_date +"</td>";   
+						tags += "<td>" + board.bo_hit +"</td>";   
+						tags += "<td>" + board.bo_rcmd +"</td>";  
+						tags += "</tr>";
+					})
+				} else {
+					tags += "<tr><td colspan='6'>게시글이 없습니다.</td></tr>";
+				}
+				listBody.html(tags);
+				pagingNav.html(pagingHTML);
+				// 비동기 처리 성공 -> puch state on history (state, title, url)
+				var pageNum = searchForm.find("[name='page']").val();
+				var queryString = searchForm.serialize();
+				history.pushState(resp, pageNum +"페이지", "?" + queryString);
+				searchForm.find("[name='page']").val("");
+			}
+		});
 	});
 
 	function ${pagingVO.funcName}(page) {

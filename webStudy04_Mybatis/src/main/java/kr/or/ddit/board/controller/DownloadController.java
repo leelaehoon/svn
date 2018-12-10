@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URLEncoder;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -29,7 +30,13 @@ public class DownloadController implements ICommandHandler {
 		IBoardService service = new BoardServiceImpl();
 		PdsVO pds = service.downloadPds(Long.parseLong(pds_noStr));
 		resp.setContentType("application/octet-stream");
-		String filename = new String(pds.getPds_filename().getBytes("UTF-8"), "ISO-8859-1");
+		String agent = req.getHeader("User-Agent");
+		String filename = pds.getPds_filename();
+		if (StringUtils.containsIgnoreCase(agent, "msie") || StringUtils.containsIgnoreCase(agent, "trident")) {
+			filename = URLEncoder.encode(filename, "UTF-8");
+		} else {
+			filename = new String(filename.getBytes("UTF-8"), "ISO-8859-1");
+		}
 		resp.setHeader("Content-Disposition", "attachment; filename = " + filename);
 		resp.setHeader("Content-Length", String.valueOf(pds.getPds_size()));
 		

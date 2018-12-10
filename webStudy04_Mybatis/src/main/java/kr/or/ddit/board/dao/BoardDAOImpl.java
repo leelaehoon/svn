@@ -67,13 +67,19 @@ public class BoardDAOImpl implements IBoardDAO {
 	}
 
 	@Override
-	public int updateBoard(BoardVO board) {
-		return 0;
+	public int updateBoard(BoardVO board, SqlSession session) {
+		return session.update("kr.or.ddit.board.dao.IBoardDAO.updateBoard", board);
 	}
 
 	@Override
 	public int deleteBoard(long bo_no) {
-		return 0;
+		try (
+			SqlSession sqlSession = sqlSessionFactory.openSession(false);
+		) {
+			IBoardDAO mapper = sqlSession.getMapper(IBoardDAO.class);
+			int rowCnt = mapper.deleteBoard(bo_no);
+			if (rowCnt > 0) sqlSession.commit();
+			return rowCnt;
+		}
 	}
-
 }

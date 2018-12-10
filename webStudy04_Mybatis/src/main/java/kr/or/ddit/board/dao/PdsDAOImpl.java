@@ -41,8 +41,13 @@ public class PdsDAOImpl implements IPdsDAO {
 	}
 
 	@Override
-	public int deletePds(long pds_no) {
-		return 0;
+	public int deletePds(long pds_no, SqlSession session) {
+		return session.delete("kr.or.ddit.board.dao.IPdsDAO.deletePds", pds_no);
+	}
+
+	@Override
+	public int deletePdses(BoardVO board, SqlSession session) {
+		return session.delete("kr.or.ddit.board.dao.IPdsDAO.deletePdses", board);
 	}
 
 }

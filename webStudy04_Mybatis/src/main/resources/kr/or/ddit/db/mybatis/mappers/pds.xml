@@ -35,5 +35,18 @@
 		FROM   PDS
 		WHERE PDS_NO = #{pds_no}
 	</select>
+	
+	<delete id="deletePds" parameterType="long">
+		DELETE FROM PDS
+		WHERE PDS_NO = #{pds_no}
+	</delete>
+	
+	<delete id="deletePdses" parameterType="boardVO">
+		DELETE FROM PDS
+		WHERE PDS_NO IN
+		<foreach collection="delFiles" item="pds_no" open="(" close=")" separator=",">
+			#{pds_no}
+		</foreach>
+	</delete>
 
 </mapper>

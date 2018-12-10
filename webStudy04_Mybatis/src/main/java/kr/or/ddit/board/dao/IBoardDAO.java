@@ -61,7 +61,7 @@ public interface IBoardDAO {
 	 * @param board
 	 * @return row count
 	 */
-	public int updateBoard(BoardVO board);
+	public int updateBoard(BoardVO board, SqlSession session);
 	/**
 	 * 게시글 삭제
 	 * @param bo_no 글번호

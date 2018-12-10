@@ -14,13 +14,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.or.ddit.board.service.BoardServiceImpl;
 import kr.or.ddit.board.service.IBoardService;
 import kr.or.ddit.mvc.ICommandHandler;
+import kr.or.ddit.mvc.annotation.CommandHandler;
+import kr.or.ddit.mvc.annotation.URIMapping;
 import kr.or.ddit.vo.BoardVO;
 import kr.or.ddit.vo.PagingInfoVO;
 import kr.or.ddit.web.calculate.Mime;
 
-public class BoardListController implements ICommandHandler {
-
-	@Override
+@CommandHandler
+public class BoardListController {
+	
+	@URIMapping("/board/boardList.do")
 	public String process(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
 		String page = req.getParameter("page");
 		String searchType = req.getParameter("searchType");

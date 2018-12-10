@@ -3,10 +3,12 @@ package kr.or.ddit.board.service;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 
 import kr.or.ddit.BoardException;
 import kr.or.ddit.ServiceResult;
@@ -23,6 +25,37 @@ public class BoardServiceImpl implements IBoardService {
 	IBoardDAO boardDAO = new BoardDAOImpl();
 	IPdsDAO pdsDAO = new PdsDAOImpl();
 
+	private int processFiles(BoardVO board, SqlSession session) {
+		int rowCnt = 0;
+		List<PdsVO> pdsList = board.getPdsList();
+		File saveFolder = new File("d:/boardFiles");
+		if (!saveFolder.exists()) saveFolder.mkdirs();
+		if (pdsList != null) {
+			rowCnt += pdsDAO.insertPdsList(board, session);
+			for (PdsVO pds : pdsList) {
+				try (
+						InputStream in = pds.getFileItem().getInputStream();
+				) {
+					FileUtils.copyInputStreamToFile(in, new File(saveFolder, pds.getPds_savename()));
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}
+		Long[] delFiles = board.getDelFiles();
+		if (delFiles != null) {
+			rowCnt += pdsDAO.deletePdses(board, session);
+			String[] saveNames = new String[delFiles.length];
+			for (int i = 0; i < delFiles.length; i++) {
+				saveNames[i] = pdsDAO.selectPDs(delFiles[i]).getPds_savename();
+			}
+			for (String saveName : saveNames) {
+				FileUtils.deleteQuietly(new File(saveFolder,saveName));
+			}
+		}
+		return rowCnt;
+	}
+
 	@Override
 	public ServiceResult createBoard(BoardVO board) {
 		try (
@@ -30,23 +63,9 @@ public class BoardServiceImpl implements IBoardService {
 		) {
 			int rowCnt = boardDAO.insertBoard(board, session);
 			int check = 1;
-			File saveFolder = new File("d:/boardFiles");
-			if (!saveFolder.exists()) saveFolder.mkdirs();
 			if (rowCnt > 0) {
-				List<PdsVO> pdsList = board.getPdsList();
-				if (pdsList != null) {
-					check += pdsList.size();
-					rowCnt += pdsDAO.insertPdsList(board, session);
-					for (PdsVO pds : pdsList) {
-						try (
-								InputStream in = pds.getFileItem().getInputStream();
-						) {
-							FileUtils.copyInputStreamToFile(in, new File(saveFolder, pds.getPds_savename()));
-						} catch (IOException e) {
-							throw new RuntimeException(e);
-						}
-					}
-				}
+				if (board.getPdsList() != null) check += board.getPdsList().size();
+				rowCnt += processFiles(board, session);
 			}
 			ServiceResult result = ServiceResult.FAILED;
 			if (rowCnt >= check) {
@@ -55,26 +74,8 @@ public class BoardServiceImpl implements IBoardService {
 			}
 			return result;
 		}
-		
-		
-//		ServiceResult result = ServiceResult.SUCCESS;
-//		if (boardDAO.insertBoard(board) > 0) {
-//			List<PdsVO> pdsList = board.getPdsList();
-//			if (pdsList !=null && pdsList.size() > 0) {
-//				for (PdsVO pds : pdsList) {
-//					pds.setBo_no(board.getBo_no());
-//					int rowCnt = pdsDAO.insertPds(pds);
-//					if (rowCnt < 0) {
-//						result = ServiceResult.FAILED;
-//						break;
-//					}
-//				}
-//			}
-//		} else {
-//			result = ServiceResult.FAILED;
-//		}
-//		return result;
 	}
+
 
 	@Override
 	public long retrieveBoardCount(PagingInfoVO<BoardVO> pagingVO) {
@@ -98,12 +99,60 @@ public class BoardServiceImpl implements IBoardService {
 
 	@Override
 	public ServiceResult modifyBoard(BoardVO board) {
-		return null;
+		try (
+			SqlSession session = CustomSqlSessionFactoryBuilder.getSqlSessionFactory().openSession();
+		) {
+			BoardVO check = boardDAO.selectBoard(board.getBo_no());
+			ServiceResult result = null;
+			if (check != null) {
+				if (check.getBo_pass().equals(board.getBo_pass())) {
+					int rowCnt = boardDAO.updateBoard(board, session);
+					int checkCnt = rowCnt;
+					if (rowCnt > 0) {
+						if (board.getPdsList() != null) checkCnt += board.getPdsList().size();
+						if (board.getDelFiles() != null) checkCnt += board.getDelFiles().length;
+						rowCnt += processFiles(board, session);
+					}
+					if (rowCnt >= checkCnt) {
+						session.commit();
+						result = ServiceResult.SUCCESS;
+					} else {
+						result = ServiceResult.FAILED;
+					}
+				} else {
+					result = ServiceResult.INVALIDPASSWORD;
+				}
+			} else {
+				throw new BoardException();
+			}
+			return result;
+		}
 	}
 
 	@Override
 	public ServiceResult removeBoard(BoardVO board) {
-		return null;
+		BoardVO check = boardDAO.selectBoard(board.getBo_no());
+		ServiceResult result = ServiceResult.FAILED;
+		if (check != null) {
+			if (check.getBo_pass().equals(board.getBo_pass())) {
+				int rowCnt = boardDAO.deleteBoard(board.getBo_no());
+				if (rowCnt > 0) {
+					List<PdsVO> pdsList = check.getPdsList();
+					if (pdsList!=null) {
+						File saveFolder = new File("d:/boardFiles");
+						for (PdsVO pds : pdsList) {
+							FileUtils.deleteQuietly(new File(saveFolder, pds.getPds_savename()));
+						}
+					}
+					result = ServiceResult.SUCCESS;
+				}
+			} else {
+				result = ServiceResult.INVALIDPASSWORD;
+			}
+		} else {
+			throw new BoardException();
+		}
+		return result;
 	}
 
 	@Override

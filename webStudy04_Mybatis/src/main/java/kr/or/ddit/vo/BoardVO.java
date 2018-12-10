@@ -35,6 +35,7 @@ public class BoardVO implements Serializable{
 	
 	private List<PdsVO> pdsList;
 	private List<ReplyVO> replyList;
+	private Long[] delFiles;
 	
 	private List<FileItem> fileItemList;
 	
