@@ -24,12 +24,15 @@ import kr.or.ddit.vo.PdsVO;
 public class BoardServiceImpl implements IBoardService {
 	IBoardDAO boardDAO = new BoardDAOImpl();
 	IPdsDAO pdsDAO = new PdsDAOImpl();
-
+	File saveFolder = new File("d:/boardFiles");
+	{
+		if (!saveFolder.exists()) saveFolder.mkdirs();
+	}
+	
 	private int processFiles(BoardVO board, SqlSession session) {
 		int rowCnt = 0;
 		List<PdsVO> pdsList = board.getPdsList();
-		File saveFolder = new File("d:/boardFiles");
-		if (!saveFolder.exists()) saveFolder.mkdirs();
+
 		if (pdsList != null) {
 			rowCnt += pdsDAO.insertPdsList(board, session);
 			for (PdsVO pds : pdsList) {
@@ -131,28 +134,31 @@ public class BoardServiceImpl implements IBoardService {
 
 	@Override
 	public ServiceResult removeBoard(BoardVO board) {
-		BoardVO check = boardDAO.selectBoard(board.getBo_no());
-		ServiceResult result = ServiceResult.FAILED;
-		if (check != null) {
-			if (check.getBo_pass().equals(board.getBo_pass())) {
-				int rowCnt = boardDAO.deleteBoard(board.getBo_no());
+		try (
+			SqlSession session = CustomSqlSessionFactoryBuilder.getSqlSessionFactory().openSession(false);
+		) {
+			BoardVO savedBoard = retrieveBoard(board.getBo_no());
+			ServiceResult result = null;
+			if (savedBoard.getBo_pass().equals(board.getBo_pass())) {
+				int rowCnt = boardDAO.deleteBoard(board.getBo_no(), session);	
 				if (rowCnt > 0) {
-					List<PdsVO> pdsList = check.getPdsList();
-					if (pdsList!=null) {
-						File saveFolder = new File("d:/boardFiles");
+					List<PdsVO> pdsList = savedBoard.getPdsList();
+					if (pdsList != null && pdsList.size() > 0) {
 						for (PdsVO pds : pdsList) {
 							FileUtils.deleteQuietly(new File(saveFolder, pds.getPds_savename()));
 						}
-					}
+					} // 첨부파일 체크 if end
 					result = ServiceResult.SUCCESS;
+					session.commit();
+				} else {
+					result = ServiceResult.FAILED;
 				}
 			} else {
 				result = ServiceResult.INVALIDPASSWORD;
 			}
-		} else {
-			throw new BoardException();
+			
+			return result;
 		}
-		return result;
 	}
 
 	@Override
@@ -163,5 +169,4 @@ public class BoardServiceImpl implements IBoardService {
 		}
 		return pds;
 	}
-
 }

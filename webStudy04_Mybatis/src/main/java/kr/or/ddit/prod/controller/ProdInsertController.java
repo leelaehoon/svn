@@ -22,72 +22,73 @@ import org.apache.commons.lang3.StringUtils;
 
 import kr.or.ddit.ServiceResult;
 import kr.or.ddit.filter.wrapper.FileUploadRequestWrapper;
-import kr.or.ddit.mvc.ICommandHandler;
+import kr.or.ddit.mvc.annotation.CommandHandler;
+import kr.or.ddit.mvc.annotation.URIMapping;
+import kr.or.ddit.mvc.annotation.URIMapping.HttpMethod;
 import kr.or.ddit.prod.dao.IOtherDAO;
 import kr.or.ddit.prod.dao.OtherDAOImpl;
 import kr.or.ddit.prod.service.IProdService;
 import kr.or.ddit.prod.service.ProdServiceImpl;
 import kr.or.ddit.vo.ProdVO;
 
-public class ProdInsertController implements ICommandHandler {
-
-	@Override
-	public String process(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-		String method = req.getMethod();
-		IOtherDAO otherDAO = new OtherDAOImpl();
+@CommandHandler
+public class ProdInsertController {
+	IOtherDAO otherDAO = new OtherDAOImpl();
+	IProdService service = new ProdServiceImpl();
+	
+	@URIMapping("/prod/prodInsert.do")
+	public String getProcess(HttpServletRequest req, HttpServletResponse resp) {
 		Map<String, Map<String, String>> lprodList = otherDAO.selectLprodList();
 		req.setAttribute("lprodList", lprodList);
+		return "prod/prodForm";
+	}
+	
+	@URIMapping(value="/prod/prodInsert.do", method=HttpMethod.POST)
+	public String postProcess(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		Map<String, Map<String, String>> lprodList = otherDAO.selectLprodList();
+		req.setAttribute("lprodList", lprodList);
+		ProdVO prod = new ProdVO();
+		req.setAttribute("prod", prod);
+		try {
+			BeanUtils.populate(prod, req.getParameterMap());
+		} catch (IllegalAccessException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
 		
-		if ("get".equalsIgnoreCase(method)) {
-			return "prod/prodForm";
-		} else if ("post".equalsIgnoreCase(method)) {
-			ProdVO prod = new ProdVO();
-			req.setAttribute("prod", prod);
-			try {
-				BeanUtils.populate(prod, req.getParameterMap());
-			} catch (IllegalAccessException | InvocationTargetException e) {
-				throw new RuntimeException(e);
-			}
-			
-			String view = null;
-			String message = null;
-			Map<String, String> errors = new LinkedHashMap<>();
-			req.setAttribute("errors", errors);
-			boolean valid = validate(prod, errors);
-			if (valid) {
-				if (req instanceof FileUploadRequestWrapper) {
-					String prodImagesUrl = "/prodImages";
-					String prodImagesPath = req.getServletContext().getRealPath(prodImagesUrl);
-					File prodImagesFolder = new File(prodImagesPath);
-					FileItem fileItem = ((FileUploadRequestWrapper) req).getFileItem("prod_image");
-					if (fileItem!=null) {
-						String saveName = UUID.randomUUID().toString();
-						File saveFile = new File(prodImagesFolder, saveName);
-						try (
-						 	InputStream in = fileItem.getInputStream();
-						) {
-							FileUtils.copyInputStreamToFile(in, saveFile);
-							prod.setProd_img(saveName);
-						}
+		String view = null;
+		String message = null;
+		Map<String, String> errors = new LinkedHashMap<>();
+		req.setAttribute("errors", errors);
+		boolean valid = validate(prod, errors);
+		if (valid) {
+			if (req instanceof FileUploadRequestWrapper) {
+				String prodImagesUrl = "/prodImages";
+				String prodImagesPath = req.getServletContext().getRealPath(prodImagesUrl);
+				File prodImagesFolder = new File(prodImagesPath);
+				FileItem fileItem = ((FileUploadRequestWrapper) req).getFileItem("prod_image");
+				if (fileItem!=null) {
+					String saveName = UUID.randomUUID().toString();
+					File saveFile = new File(prodImagesFolder, saveName);
+					try (
+					 	InputStream in = fileItem.getInputStream();
+					) {
+						FileUtils.copyInputStreamToFile(in, saveFile);
+						prod.setProd_img(saveName);
 					}
 				}
-				
-				IProdService service = new ProdServiceImpl();
-				ServiceResult result = service.createProd(prod);
-				if (ServiceResult.SUCCESS.equals(result)) {
-					view = "redirect:/prod/prodView.do?what=" + prod.getProd_id();
-				} else {
-					req.setAttribute("message", "서버오류!!");
-					view = "prod/prodForm";
-				}
+			}
+			
+			ServiceResult result = service.createProd(prod);
+			if (ServiceResult.SUCCESS.equals(result)) {
+				view = "redirect:/prod/prodView.do?what=" + prod.getProd_id();
 			} else {
+				req.setAttribute("message", "서버오류!!");
 				view = "prod/prodForm";
 			}
-			return view;
 		} else {
-			resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-			return null;
+			view = "prod/prodForm";
 		}
+		return view;
 	}
 
 	private boolean validate(ProdVO prod, Map<String, String> errors) {

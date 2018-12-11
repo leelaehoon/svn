@@ -28,4 +28,9 @@ public class URIMappingInfo {
 	public Method getHandlerMethod() {
 		return handlerMethod;
 	}
+
+	@Override
+	public String toString() {
+		return "URIMappingInfo [commandHandler=" + commandHandler + ", handlerMethod=" + handlerMethod + "]";
+	}
 }

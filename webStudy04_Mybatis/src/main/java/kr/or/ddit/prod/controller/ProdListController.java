@@ -1,7 +1,6 @@
 package kr.or.ddit.prod.controller;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,10 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import kr.or.ddit.member.service.IMemberService;
-import kr.or.ddit.member.service.MemberServiceImpl;
-import kr.or.ddit.mvc.ICommandHandler;
 import kr.or.ddit.mvc.annotation.CommandHandler;
+import kr.or.ddit.mvc.annotation.URIMapping;
 import kr.or.ddit.prod.dao.IOtherDAO;
 import kr.or.ddit.prod.dao.OtherDAOImpl;
 import kr.or.ddit.prod.service.IProdService;
@@ -26,9 +23,10 @@ import kr.or.ddit.vo.PagingInfoVO;
 import kr.or.ddit.vo.ProdVO;
 
 @CommandHandler
-public class ProdListController implements ICommandHandler {
+public class ProdListController {
+	IProdService service = new ProdServiceImpl();
 
-	@Override
+	@URIMapping("/prod/prodList.do")
 	public String process(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
 		ProdVO searchVO = new ProdVO();
 		searchVO.setProd_lgu(req.getParameter("prod_lgu"));
@@ -44,7 +42,6 @@ public class ProdListController implements ICommandHandler {
 		pagingVO.setCurrentPage(currentPage);
 		pagingVO.setSearchVO(searchVO);
 		
-		IProdService service = new ProdServiceImpl();
 		IOtherDAO otherDAO = new OtherDAOImpl();
 		Map<String, Map<String, String>> lprodList = otherDAO.selectLprodList();
 		List<BuyerVO> buyerList = otherDAO.selectBuyerList(null);

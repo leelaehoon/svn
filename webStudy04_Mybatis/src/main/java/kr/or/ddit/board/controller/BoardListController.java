@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kr.or.ddit.board.service.BoardServiceImpl;
 import kr.or.ddit.board.service.IBoardService;
-import kr.or.ddit.mvc.ICommandHandler;
 import kr.or.ddit.mvc.annotation.CommandHandler;
 import kr.or.ddit.mvc.annotation.URIMapping;
 import kr.or.ddit.vo.BoardVO;
@@ -22,6 +21,7 @@ import kr.or.ddit.web.calculate.Mime;
 
 @CommandHandler
 public class BoardListController {
+	IBoardService service = new BoardServiceImpl();
 	
 	@URIMapping("/board/boardList.do")
 	public String process(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
@@ -36,7 +36,6 @@ public class BoardListController {
 		pagingVO.setSearchType(searchType);
 		pagingVO.setSearchWord(searchWord);
 		
-		IBoardService service = new BoardServiceImpl();
 		long totalRecord = service.retrieveBoardCount(pagingVO);
 		
 		pagingVO.setTotalRecord(totalRecord);

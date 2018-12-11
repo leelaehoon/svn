@@ -14,6 +14,7 @@
 	crossorigin="anonymous">
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/js/jquery-3.3.1.min.js"></script>
+<script src="http://malsup.github.com/jquery.form.js"></script> 
 <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
 	integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
@@ -24,8 +25,8 @@
 	crossorigin="anonymous"></script>
 <script type="text/javascript">
 	function ${pagingVO.funcName}(page) {
-		document.searchForm.page.value = page;
-		document.searchForm.submit();
+		$("[name='searchForm']").find("[name='page']").val(page);
+		$("[name='searchForm']").submit();
 	}
 	
 	$(function () {
@@ -33,6 +34,39 @@
 			var buyer_id = $(this).find("td:first").text();
 			location.href = "${pageContext.request.contextPath}/buyer/buyerView.do?what=" + buyer_id;
 		});
+		
+		var searchForm = $("[name='searchForm']");
+		var listBody = $("#listBody");		
+		var pagingNav = $("#pagingNav");
+		
+		searchForm.ajaxForm({
+			dataType : 'json',
+			success : function (resp) {
+				var tags = "";
+				var buyerList = resp.dataList;
+				var pagingHTML = resp.pagingHTML;
+				if (buyerList) {
+					$.each(buyerList, function (idx, buyer) {
+						tags += "<tr>";
+						tags += "<td>" + buyer.buyer_id + "</td>";
+						tags += "<td>" + buyer.buyer_name + "</td>";
+						tags += "<td>" + buyer.address + "</td>";
+						tags += "<td>" + buyer.buyer_comtel + "</td>";
+						tags += "<td>" + buyer.buyer_charger + "</td>";
+						tags += "</tr>";
+					})	
+				} else {
+					tags += "<tr><td colspan='5'>거래처 목록이 없습니다.</td></tr>";
+				}
+				listBody.html(tags);
+				pagingNav.html(pagingHTML);
+				searchForm.find("[name='page']").val("");
+			},
+			error : function (resp) {
+				
+			}
+		});
+		
 	});
 </script>
 <style type="text/css">
@@ -75,10 +109,10 @@
 	<tfoot>
 			<tr>
 				<td colspan="6">
-					<nav aria-label="Page navigation example">
+					<nav aria-label="Page navigation example" id="pagingNav">
 						${pagingVO.pagingHTML}
 					</nav>
-					<form name="searchForm">
+					<form name="searchForm" action="<c:url value='/buyer/buyerList.do' />" >
 						<div class="form-group row">
 							<input type="hidden" name="page" />
 							<div class="col-xs-2">

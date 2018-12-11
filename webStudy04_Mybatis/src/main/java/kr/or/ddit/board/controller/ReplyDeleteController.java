@@ -17,13 +17,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.or.ddit.ServiceResult;
 import kr.or.ddit.board.service.IReplyService;
 import kr.or.ddit.board.service.ReplyServiceImpl;
-import kr.or.ddit.mvc.ICommandHandler;
+import kr.or.ddit.mvc.annotation.CommandHandler;
+import kr.or.ddit.mvc.annotation.URIMapping;
+import kr.or.ddit.mvc.annotation.URIMapping.HttpMethod;
 import kr.or.ddit.vo.ReplyVO;
 import kr.or.ddit.web.calculate.Mime;
 
-public class ReplyDeleteController implements ICommandHandler{
+@CommandHandler
+public class ReplyDeleteController {
+	IReplyService service = new ReplyServiceImpl();
 
-	@Override
+	@URIMapping(value="/reply/replyDelete.do", method=HttpMethod.POST)
 	public String process(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
 		ReplyVO reply = new ReplyVO();
 		try {
@@ -40,7 +44,6 @@ public class ReplyDeleteController implements ICommandHandler{
 		// 자바빈의 setter를 통해 객체의 상태를 설정 -JavaBean Pattern -> Builder Pattern
 		
 		Map<String, String> errors = new HashMap<>();
-		IReplyService service = new ReplyServiceImpl();
 		ServiceResult result = service.removeReply(reply);
 		switch (result) {
 		case INVALIDPASSWORD:

@@ -63,7 +63,13 @@ public class BoardDAOImpl implements IBoardDAO {
 
 	@Override
 	public void incrementRcmd(long bo_no) {
-
+		try (
+				SqlSession sqlSession = sqlSessionFactory.openSession(false);
+				) {
+			IBoardDAO mapper = sqlSession.getMapper(IBoardDAO.class);
+			mapper.incrementRcmd(bo_no);
+			sqlSession.commit();
+		}
 	}
 
 	@Override
@@ -72,14 +78,7 @@ public class BoardDAOImpl implements IBoardDAO {
 	}
 
 	@Override
-	public int deleteBoard(long bo_no) {
-		try (
-			SqlSession sqlSession = sqlSessionFactory.openSession(false);
-		) {
-			IBoardDAO mapper = sqlSession.getMapper(IBoardDAO.class);
-			int rowCnt = mapper.deleteBoard(bo_no);
-			if (rowCnt > 0) sqlSession.commit();
-			return rowCnt;
-		}
+	public int deleteBoard(long bo_no, SqlSession session) {
+		return session.delete("kr.or.ddit.board.dao.IBoardDAO.deleteBoard", bo_no);
 	}
 }

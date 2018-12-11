@@ -41,13 +41,19 @@
    		]]> 
 	</select>
 	
-	<select id="selectBuyer" parameterType="string" resultType="buyerVO">
+	<resultMap type="buyerVO" id="buyerMap" autoMapping="true">
+		<id property="buyer_id" column="BUYER_ID"/>
+		<collection property="prodList" autoMapping="true" javaType="java.util.List" ofType="prodVO" />
+	</resultMap>
+	
+	<select id="selectBuyer" parameterType="string" resultMap="buyerMap">
 		SELECT
 		    BUYER_ID,    BUYER_NAME,    BUYER_LGU,    BUYER_BANK,
 		    BUYER_BANKNO,    BUYER_BANKNAME,    BUYER_ZIP,    BUYER_ADD1,
 		    BUYER_ADD2,    BUYER_COMTEL,    BUYER_FAX,    BUYER_MAIL,
-		    BUYER_CHARGER,    BUYER_TELEXT
-		FROM BUYER
+		    BUYER_CHARGER,    BUYER_TELEXT,
+		    PROD_NAME, PROD_COST, PROD_PRICE, PROD_OUTLINE, PROD_DETAIL
+		FROM BUYER LEFT OUTER JOIN PROD ON (BUYER_ID = PROD_BUYER)
 		WHERE BUYER_ID = #{buyer_id}
 	</select>
 	

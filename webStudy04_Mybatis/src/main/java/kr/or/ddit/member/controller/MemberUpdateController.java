@@ -23,13 +23,18 @@ import kr.or.ddit.ServiceResult;
 import kr.or.ddit.filter.wrapper.FileUploadRequestWrapper;
 import kr.or.ddit.member.service.IMemberService;
 import kr.or.ddit.member.service.MemberServiceImpl;
-import kr.or.ddit.mvc.ICommandHandler;
+import kr.or.ddit.mvc.annotation.CommandHandler;
+import kr.or.ddit.mvc.annotation.URIMapping;
+import kr.or.ddit.mvc.annotation.URIMapping.HttpMethod;
 import kr.or.ddit.validator.GeneralValidator;
 import kr.or.ddit.validator.UpdateGroup;
 import kr.or.ddit.vo.MemberVO;
 
-public class MemberUpdateController implements ICommandHandler {
-	@Override
+@CommandHandler
+public class MemberUpdateController {
+	IMemberService service = new MemberServiceImpl();
+
+	@URIMapping(value="/member/memberUpdate.do", method=HttpMethod.POST)
 	public String process(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		MemberVO member = new MemberVO();
 		req.setAttribute("member", member);
@@ -52,7 +57,6 @@ public class MemberUpdateController implements ICommandHandler {
 					member.setMem_img(fileItem.get());
 				}
 			}
-			IMemberService service = new MemberServiceImpl();
 			ServiceResult result = service.modifyMember(member);
 			switch (result) {
 			case INVALIDPASSWORD :  

@@ -1,12 +1,10 @@
 package kr.or.ddit.member.controller;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,31 +16,24 @@ import kr.or.ddit.ServiceResult;
 import kr.or.ddit.filter.wrapper.FileUploadRequestWrapper;
 import kr.or.ddit.member.service.IMemberService;
 import kr.or.ddit.member.service.MemberServiceImpl;
-import kr.or.ddit.mvc.ICommandHandler;
+import kr.or.ddit.mvc.annotation.CommandHandler;
+import kr.or.ddit.mvc.annotation.URIMapping;
+import kr.or.ddit.mvc.annotation.URIMapping.HttpMethod;
 import kr.or.ddit.validator.GeneralValidator;
 import kr.or.ddit.validator.InsertGroup;
 import kr.or.ddit.vo.MemberVO;
 
-public class MemberInsertController implements ICommandHandler {
-	@Override
-	public String process(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-		String method = req.getMethod();
-		String view = null;
-		if ("get".equalsIgnoreCase(method)) {
-			view = doGet(req, resp);
-		} else if ("post".equalsIgnoreCase(method)) {
-			view = doPost(req, resp);
-		} else {
-			resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-		}
-		return view;
-	}
+@CommandHandler
+public class MemberInsertController {
+	IMemberService service = new MemberServiceImpl();
 	
-	protected String doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	@URIMapping("/member/memberInsert.do")
+	public String getProcess(HttpServletRequest req, HttpServletResponse resp) {
 		return "member/memberForm";
 	}
 	
-	protected String doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	@URIMapping(value="/member/memberInsert.do", method=HttpMethod.POST)
+	public String postProcess(HttpServletRequest req, HttpServletResponse resp) {
 		MemberVO member = new MemberVO(); // Command Object
 		req.setAttribute("member", member);
 //		member.setMem_id(req.getParameter("mem_id"));
@@ -65,7 +56,6 @@ public class MemberInsertController implements ICommandHandler {
 					member.setMem_img(fileItem.get());
 				}
 			}
-			IMemberService service = new MemberServiceImpl();
 			ServiceResult result = service.registMember(member);
 			switch (result) {
 			case PKDUPLICATED :  

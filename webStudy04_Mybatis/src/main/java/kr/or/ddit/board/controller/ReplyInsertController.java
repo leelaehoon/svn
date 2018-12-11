@@ -21,13 +21,17 @@ import kr.or.ddit.board.dao.IReplyDAO;
 import kr.or.ddit.board.dao.ReplyDAOImpl;
 import kr.or.ddit.board.service.IReplyService;
 import kr.or.ddit.board.service.ReplyServiceImpl;
-import kr.or.ddit.mvc.ICommandHandler;
+import kr.or.ddit.mvc.annotation.CommandHandler;
+import kr.or.ddit.mvc.annotation.URIMapping;
+import kr.or.ddit.mvc.annotation.URIMapping.HttpMethod;
 import kr.or.ddit.vo.ReplyVO;
 import kr.or.ddit.web.calculate.Mime;
 
-public class ReplyInsertController implements ICommandHandler {
-
-	@Override
+@CommandHandler
+public class ReplyInsertController {
+	IReplyService service = new ReplyServiceImpl();
+	
+	@URIMapping(value="/reply/replyInsert.do", method=HttpMethod.POST)
 	public String process(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
 		ReplyVO reply = new ReplyVO(); // COMMAND OBJECT
 		try {
@@ -39,7 +43,6 @@ public class ReplyInsertController implements ICommandHandler {
 		Map<String, String> errors = new HashMap<>();
 		boolean valid = validate(reply, errors);
 		if (valid) {
-			IReplyService service = new ReplyServiceImpl();
 			ServiceResult result = service.createReply(reply);
 			
 			if (ServiceResult.SUCCESS.equals(result)) {

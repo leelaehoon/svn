@@ -11,17 +11,19 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import kr.or.ddit.mvc.ICommandHandler;
+import kr.or.ddit.mvc.annotation.CommandHandler;
+import kr.or.ddit.mvc.annotation.URIMapping;
 import kr.or.ddit.prod.dao.IOtherDAO;
 import kr.or.ddit.prod.dao.OtherDAOImpl;
 import kr.or.ddit.vo.BuyerVO;
 
-public class AjaxBuyerListController implements ICommandHandler {
-
-	@Override
+@CommandHandler
+public class AjaxBuyerListController {
+	IOtherDAO otherDAO = new OtherDAOImpl();
+	
+	@URIMapping("/prod/getBuyerList.do")
 	public String process(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
 		String buyer_lgu = req.getParameter("prod_lgu");
-		IOtherDAO otherDAO = new OtherDAOImpl();
 		List<BuyerVO> buyerList = otherDAO.selectBuyerList(buyer_lgu);
 		ObjectMapper mapper = new ObjectMapper();
 		resp.setContentType("application/json;charset=UTF-8");

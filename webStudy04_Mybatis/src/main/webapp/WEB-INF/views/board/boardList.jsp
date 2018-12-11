@@ -113,7 +113,12 @@
 						<c:forEach items="${boardList }" var="board" >
 							<tr>
 								<td>${board.bo_no }</td>
-								<td><a href="${boardView }?what=${board.bo_no}">${board.bo_title }</a></td>
+								<td>
+									<c:forEach begin="2" end="${board.bo_level }">
+										&nbsp;&nbsp;
+									</c:forEach>
+									<a href="${boardView }?what=${board.bo_no}">${board.bo_title }</a>
+								</td>
 								<td>${board.bo_writer }</td>
 								<td>${board.bo_date }</td>
 								<td>${board.bo_hit }</td>
@@ -139,7 +144,7 @@
 				<tr>
 					<td colspan="6">
 						<div class="d-flex justify-content-center">
-							<form name="searchForm">
+							<form name="searchForm" action="<c:url value='/board/boardList.do' />">
 								<div class="form-group row">
 									<input type="hidden" name="page" />
 									<div class="col-xs-2 col-centered">

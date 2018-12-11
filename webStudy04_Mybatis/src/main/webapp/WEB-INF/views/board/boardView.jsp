@@ -21,8 +21,16 @@
 	src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
 	integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
 	crossorigin="anonymous"></script>
-<script type="text/javascript" src="<c:url value='/js/replyProcess.js' />" ></script>
+<script type="text/javascript" src="<c:url value='/js/replyProcess.js' />?a=<%=System.currentTimeMillis() %>" ></script>
+<c:if test="${empty cookie.recommandCookie }">
+
+</c:if>
 <script type="text/javascript">
+	<c:if test="${not empty sessionScope.message }">
+		alert("${sessionScope.message }")
+		<c:remove var="message" scope="session"/>
+	</c:if>
+		
 	$.getContextPath = function () {
 		return "${pageContext.request.contextPath}";
 	}
@@ -34,8 +42,9 @@
 			trHtml = tr.html();
 			var check = confirm("정말 삭제하시겠습니까?");
 			if (check) {
-				var tdHtml = "<td cols='6'><input type='password' id='bo_pass' ><input id='deleteConfirm' type='button' value='확인' /><input id='deleteCancel' type='button' value='취소'/></td>"
-				tr.html(tdHtml);				
+				var tdHtml = "<td cols='5'><input type='password' id='bo_pass' ><input id='deleteConfirm' type='button' value='확인' /><input id='deleteCancel' type='button' value='취소'/></td>"
+				tr.html(tdHtml);
+				$("#bo_pass").focus();
 			}
 		})
 		
@@ -49,6 +58,30 @@
 			deleteForm.submit();
 		})
 		
+		$("#recommand").on("click", function () {
+			<c:if test="${empty cookie.recommandCookie }">
+				var recommandBtn = $(this);
+				var recommandCnt = recommandBtn.val();
+				recommandCnt = parseInt(recommandCnt.substring(recommandCnt.indexOf("(")+1,recommandCnt.indexOf(")")));
+				$.ajax({
+					url : "<c:url value='/board/recommand.do' />",
+					method : "get",
+					data : {
+						bo_no:"${board.bo_no}"
+					},
+					success : function(resp) {
+						recommandCnt += 1;
+						recommandBtn.val("추천(" + recommandCnt + ")");
+					},
+					error : function(resp) {
+						alert(resp.statusCode);
+					}
+				})
+			</c:if>
+			<c:if test="${not empty cookie.recommandCookie}">
+				alert("이미 추천하셨습니다.");
+			</c:if>
+		});
 	})
 </script>
 <style type="text/css">
@@ -72,14 +105,21 @@
 						<th>작성자:${board.bo_writer }</th>
 						<th>날짜:${board.bo_date }</th>
 						<th>조회:${board.bo_hit }</th>
-						<th>추천:${board.bo_rcmd }</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
-						<td colspan="6">
+						<td colspan="5">
 							<div class="bo_content">
 								${board.bo_content }
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="5">
+							<div class="d-flex justify-content-center">
+								<input id="recommand" class="btn btn-primary" type="button" value="추천(${board.bo_rcmd })" />
+								<input class="btn btn-danger" type="button" value="비추천" />
 							</div>
 						</td>
 					</tr>
@@ -89,7 +129,7 @@
 								<c:url value="/board/download.do" var="downloadURL">
 									<c:param name="what" value="${pds.pds_no }" />
 								</c:url>
-								<td colspan="6">
+								<td colspan="5">
 									첨부파일: <a href="${downloadURL }">${pds.pds_filename }</a>
 								</td>
 							</tr>
@@ -98,12 +138,16 @@
 				</tbody>
 				<tfoot>
 					<tr>
-						<td colspan="6">
+						<td colspan="5">
 							<c:url value='/board/boardUpdate.do' var="updateURL">
 								<c:param name="what" value="${board.bo_no }" />
 							</c:url>
 							<input type="button" value="수정" onclick="location.href='${updateURL}'" />
 							<input type="button" value="삭제" id="deleteBtn" />
+							<c:url value="/board/boardInsert.do" var="insertURL" >
+								<c:param name="parent" value="${board.bo_no }"></c:param>
+							</c:url>
+							<input type="button" value="답글쓰기" onclick="location.href='${insertURL}'" />
 						</td>
 					</tr>
 				</tfoot>

@@ -68,7 +68,7 @@ public class AuthenticationFilter implements Filter {
 		if (pass) {
 			chain.doFilter(request, response);
 		} else {
-			String goPage = "/login/loginForm.jsp";
+			String goPage = "/login/loginCheck.do";
 			HttpServletResponse resp = (HttpServletResponse) response;
 			resp.sendRedirect(req.getContextPath() + goPage);
 		}

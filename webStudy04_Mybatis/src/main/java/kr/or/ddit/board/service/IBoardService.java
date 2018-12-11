@@ -57,14 +57,12 @@ public interface IBoardService {
 	 * @return 없으면 BoardException(unchecked exception), INVALIDPASSWORD, SUCCESS, FAILED
 	 */
 	public ServiceResult removeBoard(BoardVO board);
-	
 	/**
 	 * 첨부파일 다운로드용 메소드
 	 * @param pds_no 파일 번호
 	 * @return 없으면 BoardException 발생
 	 */
 	public PdsVO downloadPds(long pds_no);
-	
 }
 
 

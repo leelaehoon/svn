@@ -104,8 +104,8 @@
 			replyForm.find("[name='rep_pass']").val(rep_pass);
 			replyForm.submit();
 			replyForm.attr("action", originAction);
-		})
-		
+		});
+
 		listBody.on("click", ".cancel", function () {
 			$(this).parent().html(originTag);
 		})

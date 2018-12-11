@@ -47,6 +47,7 @@
 <form id="boardForm" action="${boardURL }" method="post" enctype="multipart/form-data">
 	<input type="hidden" name="bo_no" value="${board.bo_no }" />
 	<input type="hidden" name="bo_ip" value="${pageContext.request.remoteAddr }" />
+	<input type="hidden" name="bo_parent" value="${param.parent }" />
 	<table class="table" id="formTable">
 		<tr>
 			<th>작성자</th>

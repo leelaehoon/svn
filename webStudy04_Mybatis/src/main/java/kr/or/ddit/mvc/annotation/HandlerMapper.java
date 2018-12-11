@@ -8,6 +8,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import kr.or.ddit.mvc.annotation.URIMapping.HttpMethod;
 import kr.or.ddit.utils.ReflectionUtil;
 
@@ -18,25 +21,36 @@ import kr.or.ddit.utils.ReflectionUtil;
  * 4. 웹상의 요청을 통해 해당 요청을 처리할 수 있는 핸들러에 대한 정보(URIMappingInfo)를 handlerMap에서 찾음
  */
 public class HandlerMapper {
-	public Map<URIMappingCondition, URIMappingInfo> handlerMap;
+	Logger logger = LoggerFactory.getLogger(getClass());
 	
+	public Map<URIMappingCondition, URIMappingInfo> handlerMap;
+
 	public HandlerMapper(String...basePackages) {
 		handlerMap = new LinkedHashMap<>();
-		List<Class<?>> classList = ReflectionUtil.getClassesWithAnnotationAtBasePackages(CommandHandler.class, basePackages);
-		for (Class<?> handlerClz : classList) {
-			List<Method> methodList = ReflectionUtil.getMethodsWithAnnotationAtClass(handlerClz, URIMapping.class, String.class, HttpServletRequest.class, HttpServletResponse.class);
-			try {
-				Object commandHandler = handlerClz.newInstance();
-				for (Method temp : methodList) {
-					URIMapping uriMapping = temp.getAnnotation(URIMapping.class);
-					URIMappingCondition condition = new URIMappingCondition(uriMapping.value(), uriMapping.method());
-					URIMappingInfo mappingInfo = new URIMappingInfo(condition, commandHandler, temp);
-					handlerMap.put(condition, mappingInfo);
+		try {
+			List<Class<?>> classList = ReflectionUtil.getClassesWithAnnotationAtBasePackages(CommandHandler.class, basePackages);
+			for (Class<?> handlerClz : classList) {
+				List<Method> methodList = ReflectionUtil.getMethodsWithAnnotationAtClass(handlerClz, URIMapping.class, String.class, HttpServletRequest.class, HttpServletResponse.class);
+				try {
+					Object commandHandler = handlerClz.newInstance();
+					for (Method temp : methodList) {
+						URIMapping uriMapping = temp.getAnnotation(URIMapping.class);
+						URIMappingCondition condition = new URIMappingCondition(uriMapping.value(), uriMapping.method());
+						URIMappingInfo mappingInfo = new URIMappingInfo(condition, commandHandler, temp);
+						if (handlerMap.containsKey(condition)) {
+							String message = String.format("%s 조건에 대한 핸들러 %s가 있기 때문에 %s를 등록할 수 없음", condition.toString(), handlerMap.get(condition), mappingInfo.toString());
+							throw new RuntimeException(message);
+						}
+						handlerMap.put(condition, mappingInfo);
+						logger.info("{} 조건의 요청에 대한 핸들러 : {}", condition.toString(), mappingInfo.toString());
+					}
+				} catch (InstantiationException | IllegalAccessException e) {
+					throw new RuntimeException("핸들러 객체 생성 중 문제발생", e);
 				}
-			} catch (InstantiationException | IllegalAccessException e) {
-				throw new RuntimeException("핸들러 객체 생성 중 문제발생", e);
-			}
-		} // for end
+			} // for end
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	public URIMappingInfo findCommandHandler(HttpServletRequest request) {

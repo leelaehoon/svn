@@ -10,13 +10,15 @@ import org.apache.commons.lang3.StringUtils;
 
 import kr.or.ddit.buyer.service.BuyerServiceImpl;
 import kr.or.ddit.buyer.service.IBuyerService;
-import kr.or.ddit.mvc.ICommandHandler;
+import kr.or.ddit.mvc.annotation.CommandHandler;
+import kr.or.ddit.mvc.annotation.URIMapping;
 import kr.or.ddit.vo.BuyerVO;
-import oracle.net.aso.b;
 
-public class BuyerViewController implements ICommandHandler {
+@CommandHandler
+public class BuyerViewController {
+	IBuyerService service = new BuyerServiceImpl();
 
-	@Override
+	@URIMapping("/buyer/buyerView.do")
 	public String process(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
 		String buyer_id = req.getParameter("what");
 		
@@ -25,7 +27,6 @@ public class BuyerViewController implements ICommandHandler {
 			return null;
 		}
 		
-		IBuyerService service = new BuyerServiceImpl();
 		BuyerVO buyer = service.retrieveBuyer(buyer_id);
 		req.setAttribute("buyer", buyer);
 		

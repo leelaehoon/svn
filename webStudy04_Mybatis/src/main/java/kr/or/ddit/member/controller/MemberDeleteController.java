@@ -1,28 +1,26 @@
 package kr.or.ddit.member.controller;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import kr.or.ddit.ServiceResult;
 import kr.or.ddit.member.service.IMemberService;
 import kr.or.ddit.member.service.MemberServiceImpl;
-import kr.or.ddit.mvc.ICommandHandler;
+import kr.or.ddit.mvc.annotation.CommandHandler;
+import kr.or.ddit.mvc.annotation.URIMapping;
+import kr.or.ddit.mvc.annotation.URIMapping.HttpMethod;
 import kr.or.ddit.vo.MemberVO;
 
-public class MemberDeleteController implements ICommandHandler {
-	@Override
+@CommandHandler
+public class MemberDeleteController {
+	IMemberService service = new MemberServiceImpl();
+	
+	@URIMapping(value="/member/memberDelete.do", method=HttpMethod.POST)
 	public String process(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		req.setCharacterEncoding("UTF-8");
 		String mem_id = req.getParameter("mem_id");
@@ -31,7 +29,6 @@ public class MemberDeleteController implements ICommandHandler {
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return null;
 		}
-		IMemberService service = new MemberServiceImpl();
 		ServiceResult result = service.removeMember(new MemberVO(mem_id, mem_pass));
 		String view = null;
 		String message = null;

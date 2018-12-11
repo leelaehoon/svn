@@ -15,19 +15,21 @@ import org.apache.commons.lang3.StringUtils;
 
 import kr.or.ddit.board.service.BoardServiceImpl;
 import kr.or.ddit.board.service.IBoardService;
-import kr.or.ddit.mvc.ICommandHandler;
+import kr.or.ddit.mvc.annotation.CommandHandler;
+import kr.or.ddit.mvc.annotation.URIMapping;
 import kr.or.ddit.vo.PdsVO;
 
-public class DownloadController implements ICommandHandler {
-
-	@Override
+@CommandHandler
+public class DownloadController {
+	IBoardService service = new BoardServiceImpl();
+	
+	@URIMapping("/board/download.do")
 	public String process(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
 		String pds_noStr = req.getParameter("what");
 		if (!StringUtils.isNumeric(pds_noStr)) {
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return null;
 		}
-		IBoardService service = new BoardServiceImpl();
 		PdsVO pds = service.downloadPds(Long.parseLong(pds_noStr));
 		resp.setContentType("application/octet-stream");
 		String agent = req.getHeader("User-Agent");
