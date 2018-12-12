@@ -18,6 +18,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -27,10 +28,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class SecondCrawler {
+public class ThirdCrawler {
 	public static void main(String[] args) throws ClientProtocolException, IOException {
 		// 1. 가져올 HTTP 주소 셋팅
-		HttpPost http = new HttpPost("https://sports.news.naver.com/wfootball/record/index.nhn");
+		HttpGet http = new HttpGet("https://www.betexplorer.com/soccer/england/premier-league/bournemouth-liverpool/8AZxhZDL/");
 		// 2. 가져오기를 실행할 클라이언트 객체 생성
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		// 3. 실행 및 실행데이터를 Response 객체에 담음
@@ -52,17 +53,16 @@ public class SecondCrawler {
 		// 9. 가져온 DOM 데이터 출력
 		// 10. Jsoup으로 파싱
 		Document doc = Jsoup.parse(sb.toString());
-//		System.out.println(sb.toString());
-		System.out.println(doc.select("#wfootballTeamRecordBody").html());
-		String pattern = "%s : %5s\t";
-		String[] items = new String[] { "순위", "팀", "경기수", "승점", "승", "무", "패", "득점", "실점", "득실차"};
-		Elements rows = doc.select("div#wfootballTeamRecordBody>table>tbody>tr");
-		for (Element row : rows) {
-			Iterator<Element> it = row.getElementsByTag("td").iterator();
-			for (String item : items) {
-				System.out.print(String.format(pattern, item, it.next().text()));
-			}
-			System.out.println();
-		}
+		System.out.println(doc.select("div.h-display-none").html());
+//		String pattern = "%s : %4s\t";
+//		String[] items = new String[] {"승", "무", "패"};
+//		Elements rows = doc.select("table#sortable-1 tbody tr");
+//		for (Element row : rows) {
+//			Iterator<Element> it = row.getElementsByTag("td.table-main__detail-odds").iterator();
+//			for (String item : items) {
+//				System.out.print(String.format(pattern, item, it.next().text()));
+//			}
+//			System.out.println();
+//		}
 	}
 }

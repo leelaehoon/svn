@@ -1,5 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.or.ddit.gbook.dao.IGBookDAO">
+	<sql id="searchFrag">
+		<where>
+			<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchWord)">
+				<if test="searchType.equals('all')">
+					GB_WRITER LIKE '%'||#{searchWord}||'%'
+					OR
+					GB_CONTENT LIKE '%'||#{searchWord}||'%'
+				</if>
+				<if test="searchType.equals('writer')">
+					GB_WRITER LIKE '%'||#{searchWord}||'%'
+				</if>
+				<if test="searchType.equals('content')">
+					GB_CONTENT LIKE '%'||#{searchWord}||'%'
+				</if>
+			</if>	
+		</where>
+	</sql>
+	
+	<select id="selectTotalCount" parameterType="pagingVO" resultType="long"> 
+		SELECT COUNT(*) FROM GUESTBOOK
+		<include refid="searchFrag" />
+	</select>
+	
+	<resultMap type="gbookVO" id="gbookMap" autoMapping="true">
+		<id property="gb_no" column="GB_NO" />
+		<collection property="gbReplyList" autoMapping="true" javaType="java.util.List" ofType="gbreplyVO" />
+	</resultMap>
+	
+	<select id="selectGBookList" parameterType="pagingVO" resultMap="gbookMap"  >
+		SELECT C.*, GBR_NO, GBR_WRITER, GBR_IP, GBR_CONTENT, GBR_DATE
+		FROM (
+		SELECT B.*
+		FROM (
+		    SELECT ROWNUM RNUM, A.*
+		    FROM(
+		        SELECT GB_NO, GB_WRITER, GB_IP, GB_CONTENT, GB_DATE
+		        FROM GUESTBOOK
+		        <include refid="searchFrag" />
+		        ORDER BY GB_NO DESC) A ) B
+		WHERE RNUM BETWEEN #{startRow} AND #{endRow} ) C LEFT OUTER JOIN GUESTBOOKREPLY D ON (C.GB_NO = D.GB_NO)
+	</select>
+	
+	<insert id="insertGBook">
 
+	</insert>
 </mapper>
+
+
+
+
+
+
+
+
+
+

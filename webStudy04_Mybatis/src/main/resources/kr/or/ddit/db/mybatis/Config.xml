@@ -29,5 +29,7 @@
 		<mapper resource="kr/or/ddit/db/mybatis/mappers/board.xml"/>
 		<mapper resource="kr/or/ddit/db/mybatis/mappers/pds.xml"/>
 		<mapper resource="kr/or/ddit/db/mybatis/mappers/reply.xml"/>
+		<mapper resource="kr/or/ddit/db/mybatis/mappers/gbook.xml"/>
+		<mapper resource="kr/or/ddit/db/mybatis/mappers/gbreply.xml"/>
 	</mappers>
 </configuration>
