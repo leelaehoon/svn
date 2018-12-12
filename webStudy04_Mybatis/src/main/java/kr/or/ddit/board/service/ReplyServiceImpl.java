@@ -2,8 +2,8 @@ package kr.or.ddit.board.service;
 
 import java.util.List;
 
-import kr.or.ddit.BoardException;
 import kr.or.ddit.ServiceResult;
+import kr.or.ddit.board.BoardException;
 import kr.or.ddit.board.dao.IReplyDAO;
 import kr.or.ddit.board.dao.ReplyDAOImpl;
 import kr.or.ddit.vo.PagingInfoVO;

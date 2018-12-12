@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import kr.or.ddit.board.dao.IBoardDAO;
 import kr.or.ddit.board.service.BoardServiceImpl;
 import kr.or.ddit.board.service.IBoardService;
 import kr.or.ddit.mvc.annotation.CommandHandler;

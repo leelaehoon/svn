@@ -10,8 +10,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import kr.or.ddit.BoardException;
 import kr.or.ddit.ServiceResult;
+import kr.or.ddit.board.BoardException;
 import kr.or.ddit.board.dao.BoardDAOImpl;
 import kr.or.ddit.board.dao.IBoardDAO;
 import kr.or.ddit.board.dao.IPdsDAO;

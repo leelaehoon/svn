@@ -75,7 +75,7 @@
 		    </if>
 		) VALUES (
 		    #{bo_no},    #{bo_writer},    #{bo_pass},    #{bo_ip},
-		    #{bo_mail},    #{bo_title},    #{bo_content},    sysdate	
+		    #{bo_mail,jdbcType=VARCHAR},    #{bo_title},    #{bo_content,jdbcType=CLOB},    sysdate	
 		    <if test="bo_parent > 0">
 		    , #{bo_parent,jdbcType=NUMERIC}
 		    </if>

@@ -12,10 +12,12 @@ import org.apache.ibatis.type.Alias;
 import kr.or.ddit.filter.wrapper.FileUploadRequestWrapper;
 import kr.or.ddit.validator.rules.constraints.NotBlank;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(of= {"bo_no", "bo_writer"})
 @Alias("boardVO")
 public class BoardVO implements Serializable{
 	

@@ -1,30 +1,30 @@
-package kr.or.ddit;
+package kr.or.ddit.gbook;
 
-public class BoardException extends RuntimeException {
+public class GBookException extends RuntimeException {
 
-	public BoardException() {
+	public GBookException() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public BoardException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+	public GBookException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 		// TODO Auto-generated constructor stub
 	}
 
-	public BoardException(String message, Throwable cause) {
+	public GBookException(String message, Throwable cause) {
 		super(message, cause);
 		// TODO Auto-generated constructor stub
 	}
 
-	public BoardException(String message) {
+	public GBookException(String message) {
 		super(message);
 		// TODO Auto-generated constructor stub
 	}
 
-	public BoardException(Throwable cause) {
+	public GBookException(Throwable cause) {
 		super(cause);
 		// TODO Auto-generated constructor stub
 	}
-
+	
 }
