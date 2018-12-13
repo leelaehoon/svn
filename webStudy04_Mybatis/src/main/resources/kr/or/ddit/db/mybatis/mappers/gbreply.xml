@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.or.ddit.gbook.dao.IGBReplyDAO">
-
+	<select id="selectGBReply" parameterType="long" resultType="gbreplyVO">
+		SELECT GBR_NO, GBR_PASS
+		FROM GUESTBOOKREPLY
+		WHERE GBR_NO = #{gbr_no}
+	</select>
+	
+	<insert id="insertGBReply" parameterType="gbreplyVO">
+		<selectKey order="BEFORE" resultType="long" keyProperty="gbr_no">
+			SELECT GBREPLY_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO guestbookreply (
+		    GBR_NO, GB_NO, GBR_WRITER,   GBR_PASS,
+		    GBR_IP,  GBR_CONTENT,  GBR_DATE
+		) VALUES (
+			#{gbr_no}, #{gb_no}, #{gbr_writer},   #{gbr_pass},
+		    #{gbr_ip},  #{gbr_content},  SYSDATE
+		)
+	</insert>
+	
+	<delete id="deleteGBReply" parameterType="long">
+		DELETE FROM GUESTBOOKREPLY
+		WHERE GBR_NO = #{gbr_no}
+	</delete>
 </mapper>

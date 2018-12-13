@@ -14,7 +14,14 @@ public class GBookDAOImpl implements IGBookDAO {
 
 	@Override
 	public int insertGBook(GBookVO gbook) {
-		return 0;
+		try (
+			SqlSession session = sqlSessionFactory.openSession(false);
+		) {
+			IGBookDAO mapper = session.getMapper(IGBookDAO.class);
+			int rowCnt = mapper.insertGBook(gbook);
+			if (rowCnt > 0) session.commit();
+			return rowCnt;
+		}
 	}
 
 	@Override
@@ -36,6 +43,16 @@ public class GBookDAOImpl implements IGBookDAO {
 			return mapper.selectGBookList(pagingVO);
 		}
 	}
+	
+	@Override
+	public GBookVO selectGBook(long gb_no) {
+		try (
+				SqlSession session = sqlSessionFactory.openSession();
+				) {
+			IGBookDAO mapper = session.getMapper(IGBookDAO.class);
+			return mapper.selectGBook(gb_no);
+		}
+	}
 
 	@Override
 	public int updateGBook(GBookVO gbook) {
@@ -44,7 +61,15 @@ public class GBookDAOImpl implements IGBookDAO {
 
 	@Override
 	public int deleteGBook(long gb_no) {
-		return 0;
+		try (
+			SqlSession session = sqlSessionFactory.openSession(false);
+		) {
+			IGBookDAO mapper = session.getMapper(IGBookDAO.class);
+			int rowCnt = mapper.deleteGBook(gb_no);
+			if (rowCnt > 0) session.commit();
+			return rowCnt;
+		}
 	}
+
 
 }

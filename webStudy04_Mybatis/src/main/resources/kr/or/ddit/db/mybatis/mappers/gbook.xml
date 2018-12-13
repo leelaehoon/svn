@@ -26,7 +26,7 @@
 	
 	<resultMap type="gbookVO" id="gbookMap" autoMapping="true">
 		<id property="gb_no" column="GB_NO" />
-		<collection property="gbReplyList" autoMapping="true" javaType="java.util.List" ofType="gbreplyVO" />
+		<collection property="gbreplyList" autoMapping="true" javaType="java.util.List" ofType="gbreplyVO" />
 	</resultMap>
 	
 	<select id="selectGBookList" parameterType="pagingVO" resultMap="gbookMap"  >
@@ -36,16 +36,36 @@
 		FROM (
 		    SELECT ROWNUM RNUM, A.*
 		    FROM(
-		        SELECT GB_NO, GB_WRITER, GB_IP, GB_CONTENT, GB_DATE
+		        SELECT GB_NO, GB_WRITER, GB_IP, GB_CONTENT, GB_DATE, GB_IMAGE
 		        FROM GUESTBOOK
 		        <include refid="searchFrag" />
 		        ORDER BY GB_NO DESC) A ) B
 		WHERE RNUM BETWEEN #{startRow} AND #{endRow} ) C LEFT OUTER JOIN GUESTBOOKREPLY D ON (C.GB_NO = D.GB_NO)
 	</select>
 	
-	<insert id="insertGBook">
-
+	<select id="selectGBook" parameterType="long" resultType="gbookVO">
+		SELECT GB_NO, GB_PASS
+		FROM GUESTBOOK
+		WHERE GB_NO = #{gb_no}
+	</select>
+	
+	<insert id="insertGBook" parameterType="gbookVO">
+		<selectKey order="BEFORE" resultType="long" keyProperty="gb_no">
+			SELECT GBOOK_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO guestbook (
+		    GB_NO,   GB_WRITER,   GB_PASS,   GB_IP,
+		    GB_CONTENT,   GB_DATE,   GB_IMAGE
+		) VALUES (
+			#{gb_no},   #{gb_writer},   #{gb_pass},   #{gb_ip},
+		    #{gb_content},   SYSDATE,   #{gb_image,jdbcType=BLOB}
+		)
 	</insert>
+	
+	<delete id="deleteGBook" parameterType="long">
+		DELETE FROM GUESTBOOK
+		WHERE GB_NO = #{gb_no}
+	</delete>
 </mapper>
 
 

@@ -38,6 +38,7 @@ public class GBookListController {
 		pagingVO.setCurrentPage(currentPage);
 		List<GBookVO> gbookList = service.retrieveGBookList(pagingVO);
 		pagingVO.setDataList(gbookList);
+		
 		String accept = req.getHeader("accept");
 		String view = null;
 		if (StringUtils.containsIgnoreCase(accept, "json")) {

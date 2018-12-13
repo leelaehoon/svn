@@ -134,6 +134,11 @@
 			<version>1.3</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>kr.or.ddit</groupId>
+			<artifactId>myEncrypt</artifactId>
+			<version>1.0</version>
+		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>

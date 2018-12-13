@@ -9,6 +9,7 @@ public interface IGBReplyDAO {
 	public int insertGBReply(GBReplyVO gbreply);
 	public long selectTotalCount(PagingInfoVO<GBReplyVO> pagingVO);
 	public List<GBReplyVO> selectGBReplyList(PagingInfoVO<GBReplyVO> pagingVO);
+	public GBReplyVO selectGBReply(long gbr_no);
 	public int updateGBReply(GBReplyVO gbreply);
 	public int deleteGBReply(long gbr_no);
 }

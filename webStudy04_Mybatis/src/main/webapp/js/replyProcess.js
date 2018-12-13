@@ -81,7 +81,7 @@
 			var trId = $(this).closest("tr").prop("id");
 			var rep_no = trId.substring(trId.indexOf("_")+1);
 			modifyModal.find("#rep_no").val(rep_no);
-			modifyModal.modal("show");
+			modifyModal.modal("show"); 
 		});
 		
 		$("#modalBtn").on("click", function () {
@@ -105,7 +105,7 @@
 			replyForm.submit();
 			replyForm.attr("action", originAction);
 		});
-
+		
 		listBody.on("click", ".cancel", function () {
 			$(this).parent().html(originTag);
 		})
